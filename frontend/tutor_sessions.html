@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Schedule | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/tutor_sessions.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <!-- Tutor badge -->
+        <div class="tutor-mode-badge">
+            <i class="fa-solid fa-chalkboard-user"></i> Tutor Account
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Tutor Menu</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('tutor_dashboard.html')">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#" onclick="navigateTo('tutor_sessions.html')">
+                        <i class="fa-solid fa-calendar-days"></i> My Schedule
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('wallet.html')">
+                        <i class="fa-solid fa-coins"></i> Earnings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Account</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('tutor_profile.html')">
+                        <i class="fa-solid fa-circle-user"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('help.html')">
+                        <i class="fa-solid fa-circle-question"></i> Help Center
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('tutor_profile.html')">
+                <div class="sidebar-user-av" id="sidebarAv">
+                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                    <span id="sidebarInitials">KO</span>
+                </div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role tutor-role">
+                        <i class="fa-solid fa-circle" style="font-size:6px;"></i> Tutor
+                    </div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="topbar-page-title">My Schedule</span>
+            </div>
+            <div class="topbar-welcome" id="welcomeMsg">Loading…</div>
+        </header>
+
+        <!-- Scrollable -->
+        <div class="content-scroll">
+
+            <div class="page-header">
+                <h1>My Schedule</h1>
+                <p>Manage your tutoring sessions and track your progress.</p>
+            </div>
+
+            <!-- Stats row -->
+            <div class="stats-row">
+
+                <div class="stat-card orange">
+                    <div class="stat-top">
+                        <div class="stat-icon orange">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                        </div>
+                        <div class="stat-trend warn">
+                            <i class="fa-solid fa-clock"></i> Requests
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-label">Pending Requests</div>
+                    </div>
+                </div>
+
+                <div class="stat-card violet">
+                    <div class="stat-top">
+                        <div class="stat-icon violet">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-trend violet-trend">
+                            <i class="fa-solid fa-calendar"></i> Upcoming
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="scheduledCount">0</div>
+                        <div class="stat-label">Upcoming Sessions</div>
+                    </div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-top">
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fa-solid fa-arrow-up"></i> Done
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="completedCount">0</div>
+                        <div class="stat-label">Completed Sessions</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="filter-tabs">
+                <button class="tab-btn active" onclick="filterSessions('all', this)">
+                    All <span class="tab-count" id="count-all">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('pending', this)">
+                    <i class="fa-solid fa-clock"></i> Pending
+                    <span class="tab-count" id="count-pending">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('scheduled', this)">
+                    <i class="fa-solid fa-calendar-check"></i> Scheduled
+                    <span class="tab-count" id="count-scheduled">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('awaiting_confirmation', this)">
+                    <i class="fa-solid fa-hourglass-half"></i> Awaiting
+                    <span class="tab-count" id="count-awaiting">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('completed', this)">
+                    <i class="fa-solid fa-circle-check"></i> Completed
+                    <span class="tab-count" id="count-completed">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('declined', this)">
+                    <i class="fa-solid fa-xmark"></i> Declined
+                    <span class="tab-count" id="count-declined">0</span>
+                </button>
+            </div>
+
+            <!-- Sessions list -->
+            <div class="sessions-list" id="sessionsContainer">
+                <div class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <h3>Loading sessions…</h3>
+                </div>
+            </div>
+
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/tutor_sessions.js"></script>
+
+</body>
+</html>

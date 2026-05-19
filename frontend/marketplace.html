@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Tutors | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Ethers + Contracts -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="js/contract.js"></script>
+
+    <!-- Shared CSS (already built) -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/marketplace.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Main Menu</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('dashboard.html')">
+                        <i class="fa-solid fa-grid-3"></i> Dashboard
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#" onclick="navigateTo('marketplace.html')">
+                        <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('sessions.html')">
+                        <i class="fa-solid fa-calendar-days"></i> My Sessions
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('wallet.html')">
+                        <i class="fa-solid fa-wallet"></i> Wallet & Escrow
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Account</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('profile.html')">
+                        <i class="fa-solid fa-circle-user"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('help.html')">
+                        <i class="fa-solid fa-circle-question"></i> Help Center
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
+                <div class="sidebar-user-av" id="sidebarInitials">KO</div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role">Student</div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="topbar-page-title">Find Tutors</span>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-profile" onclick="navigateTo('profile.html')">
+                    <div class="topbar-av" id="topbarInitials">KO</div>
+                    <div class="topbar-profile-name" id="topbarName">Loading…</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable -->
+        <div class="content-scroll">
+
+            <!-- ── Hero Search Banner ── -->
+            <div class="search-banner">
+                <div class="search-banner-glow"></div>
+                <div class="search-banner-grid"></div>
+
+                <div class="search-banner-inner">
+                    <div class="search-banner-text">
+                        <h1>Find your <span class="highlight">perfect tutor</span></h1>
+                        <p>Search by course code, name, or department.</p>
+                    </div>
+
+                    <div class="search-row">
+                        <div class="search-input-wrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Try 'CSC 401' or 'Calculus'…"
+                                oninput="filterTutors()"
+                                autocomplete="off"
+                            >
+                            <button class="search-clear" id="searchClear" onclick="clearSearch()" aria-label="Clear search">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter chips -->
+                    <div class="filter-chips">
+                        <button class="chip active" data-filter="all" onclick="setFilter('all', this)">
+                            <i class="fa-solid fa-layer-group"></i> All
+                        </button>
+                        <button class="chip" data-filter="csc" onclick="setFilter('csc', this)">
+                            <i class="fa-solid fa-microchip"></i> CSC
+                        </button>
+                        <button class="chip" data-filter="mth" onclick="setFilter('mth', this)">
+                            <i class="fa-solid fa-square-root-variable"></i> MTH
+                        </button>
+                        <button class="chip" data-filter="phy" onclick="setFilter('phy', this)">
+                            <i class="fa-solid fa-atom"></i> PHY
+                        </button>
+                        <button class="chip" data-filter="gst" onclick="setFilter('gst', this)">
+                            <i class="fa-solid fa-book"></i> GST
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Results bar ── -->
+            <div class="results-bar">
+                <div class="results-count">
+                    <strong id="tutorCount">0</strong> tutors found
+                </div>
+                <div class="results-sort">
+                    <select id="sortSelect" onchange="applySortAndFilter()" class="sort-select">
+                        <option value="default">Sort: Default</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="price_asc">Price: Low → High</option>
+                        <option value="price_desc">Price: High → Low</option>
+                        <option value="sessions">Most Sessions</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ── Tutor grid ── -->
+            <div class="tutor-grid" id="tutorGrid">
+                <div class="grid-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <p>Loading tutors…</p>
+                </div>
+            </div>
+
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- ══ BOOKING MODAL ══ -->
+    <div class="modal-overlay" id="bookingModal" onclick="handleModalOverlayClick(event)">
+        <div class="modal-box">
+
+            <div class="modal-head">
+                <div class="modal-head-left">
+                    <div class="modal-icon">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                    </div>
+                    <div>
+                        <h2>Book a Session</h2>
+                        <p>with <span id="modalTutorName">—</span></p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="m-field">
+                    <label class="m-label" for="bookingSubject">Subject / Course</label>
+                    <input class="m-input" type="text" id="bookingSubject" placeholder="e.g. CSC 401 — Binary Trees">
+                </div>
+
+                <div class="m-field">
+                    <label class="m-label" for="bookingMessage">Message <span class="m-label-opt">(optional)</span></label>
+                    <input class="m-input" type="text" id="bookingMessage" placeholder="What do you need help with?">
+                </div>
+
+                <div class="m-field">
+                    <label class="m-label">Tutor Availability</label>
+                    <div class="availability-pill" id="modalAvailability">
+                        <i class="fa-regular fa-clock"></i>
+                        <span>Not specified</span>
+                    </div>
+                </div>
+
+                <div class="m-row">
+                    <div class="m-field">
+                        <label class="m-label" for="bookingDate">Date & Time</label>
+                        <input class="m-input" type="datetime-local" id="bookingDate">
+                    </div>
+                    <div class="m-field">
+                        <label class="m-label" for="bookingDuration">Duration</label>
+                        <select class="m-input" id="bookingDuration" onchange="updateBookingPrice()">
+                            <option value="1">1 Hour</option>
+                            <option value="2">2 Hours</option>
+                            <option value="3">3 Hours</option>
+                            <option value="4">4 Hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="price-box">
+                    <div class="price-box-left">
+                        <div class="price-box-label">Total to Pay</div>
+                        <div class="price-box-sub">Locked in smart contract escrow</div>
+                    </div>
+                    <div class="price-box-value" id="modalPrice">0.000 ETH</div>
+                </div>
+
+                <div class="escrow-notice">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <p>Funds are locked in a smart contract and only released to the tutor after you confirm the session was completed.</p>
+                </div>
+
+                <div class="modal-btns">
+                    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button class="btn-confirm" id="confirmBtn" onclick="processBooking()">
+                        <i class="fa-solid fa-lock"></i> Confirm & Pay
+                    </button>
+                </div>
+
+            </div><!-- /modal-body -->
+        </div><!-- /modal-box -->
+    </div><!-- /booking modal -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/marketplace.js"></script>
+
+</body>
+</html>

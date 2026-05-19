@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Dashboard | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Ethers -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="js/wallet-connect.js"></script>
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/tutor_dashboard.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <!-- Tutor mode badge -->
+        <div class="tutor-mode-badge">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            Tutor Account
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Tutor Menu</div>
+            <ul class="sidebar-links">
+                <li class="active">
+                    <a href="#" onclick="navigateTo('tutor_dashboard.html')">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('tutor_sessions.html')">
+                        <i class="fa-solid fa-calendar-days"></i> My Schedule
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('wallet.html')">
+                        <i class="fa-solid fa-coins"></i> Earnings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Account</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('tutor_profile.html')">
+                        <i class="fa-solid fa-circle-user"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('help.html')">
+                        <i class="fa-solid fa-circle-question"></i> Help Center
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('tutor_profile.html')">
+                <div class="sidebar-user-av" id="sidebarAv">
+                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                    <span id="sidebarInitials">--</span>
+                </div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role tutor-role">
+                        <i class="fa-solid fa-circle" style="font-size:6px;"></i> Tutor
+                    </div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="topbar-greeting">
+                    <div class="topbar-greeting-name" id="topbarGreeting">Welcome back!</div>
+                    <div class="topbar-greeting-sub" id="topbarSub">Loading your dashboard…</div>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <button id="connectWalletBtn" onclick="connectWallet()">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span id="walletBtnText">Connect Wallet</span>
+                </button>
+
+                <div class="topbar-profile" onclick="navigateTo('tutor_profile.html')">
+                    <div class="topbar-av" id="topbarAv">
+                        <img src="" alt="" id="topbarAvImg" onerror="this.style.display='none'">
+                        <span id="topbarInitials">--</span>
+                    </div>
+                    <div>
+                        <div class="topbar-profile-name" id="topbarName">Loading…</div>
+                        <div class="topbar-profile-role">Tutor</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable content -->
+        <div class="content-scroll">
+
+            <!-- ── Stat cards ── -->
+            <div class="stats-grid">
+
+                <div class="stat-card green">
+                    <div class="stat-top">
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fa-solid fa-arrow-up"></i> Earned
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="totalEarnings">0.000 ETH</div>
+                        <div class="stat-label">Total Earnings</div>
+                    </div>
+                </div>
+
+                <div class="stat-card violet">
+                    <div class="stat-top">
+                        <div class="stat-icon violet">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div class="stat-trend violet-trend">
+                            <i class="fa-solid fa-graduation-cap"></i> Taught
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="totalSessions">0</div>
+                        <div class="stat-label">Students Taught</div>
+                    </div>
+                </div>
+
+                <div class="stat-card pink">
+                    <div class="stat-top">
+                        <div class="stat-icon pink">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="stat-trend pink-trend">
+                            <i class="fa-solid fa-certificate"></i> Rating
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="tutorRating">N/A</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Bottom grid ── -->
+            <div class="bottom-grid">
+
+                <!-- Session requests -->
+                <div class="card">
+                    <div class="card-head">
+                        <div class="card-title">New Session Requests</div>
+                        <span class="card-badge" id="requestBadge">0 pending</span>
+                    </div>
+                    <div class="requests-body" id="requestsContainer">
+                        <div class="empty-req">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            <p>Loading requests…</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="card">
+                    <div class="card-head">
+                        <div class="card-title">Quick Actions</div>
+                    </div>
+                    <div class="quick-body">
+
+                        <a class="quick-action violet-action" href="#" onclick="navigateTo('tutor_sessions.html')">
+                            <div class="quick-icon violet-icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                            <div class="quick-text">
+                                <div class="quick-text-title">My Schedule</div>
+                                <div class="quick-text-sub">View upcoming sessions</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+
+                        <a class="quick-action green-action" href="#" onclick="navigateTo('wallet.html')">
+                            <div class="quick-icon green-icon">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div class="quick-text">
+                                <div class="quick-text-title">Earnings</div>
+                                <div class="quick-text-sub">Track your payments</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+
+                        <a class="quick-action pink-action" href="#" onclick="navigateTo('tutor_profile.html')">
+                            <div class="quick-icon pink-icon">
+                                <i class="fa-solid fa-circle-user"></i>
+                            </div>
+                            <div class="quick-text">
+                                <div class="quick-text-title">Edit Profile</div>
+                                <div class="quick-text-sub">Update courses & rates</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+
+                        <a class="quick-action violet-action" href="#" onclick="navigateTo('help.html')">
+                            <div class="quick-icon violet-icon">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </div>
+                            <div class="quick-text">
+                                <div class="quick-text-title">Help Center</div>
+                                <div class="quick-text-sub">FAQs and support</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/tutor_dashboard.js"></script>
+
+</body>
+</html>

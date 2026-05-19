@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Sessions | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Ethers + Contract -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="js/contract.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/sessions.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Main Menu</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('dashboard.html')">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('marketplace.html')">
+                        <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#" onclick="navigateTo('sessions.html')">
+                        <i class="fa-solid fa-calendar-days"></i> My Sessions
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('wallet.html')">
+                        <i class="fa-solid fa-wallet"></i> Wallet & Escrow
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Account</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('profile.html')">
+                        <i class="fa-solid fa-circle-user"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('help.html')">
+                        <i class="fa-solid fa-circle-question"></i> Help Center
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
+                <div class="sidebar-user-av" id="sidebarAv">
+                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                    <span id="sidebarInitials">KO</span>
+                </div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role">Student</div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="topbar-page-title">My Sessions</span>
+            </div>
+            <button class="btn-book-new" onclick="navigateTo('marketplace.html')">
+                <i class="fa-solid fa-plus"></i> Book New Session
+            </button>
+        </header>
+
+        <!-- Scrollable content -->
+        <div class="content-scroll">
+
+            <div class="page-header">
+                <h1>My Sessions</h1>
+                <p>Track and manage all your tutoring sessions.</p>
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="filter-tabs">
+                <button class="tab-btn active" onclick="filterSessions('all', this)">
+                    All <span class="tab-count" id="count-all">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('pending', this)">
+                    <i class="fa-solid fa-clock"></i> Pending
+                    <span class="tab-count" id="count-pending">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('scheduled', this)">
+                    <i class="fa-solid fa-calendar-check"></i> Scheduled
+                    <span class="tab-count" id="count-scheduled">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('awaiting_confirmation', this)">
+                    <i class="fa-solid fa-hourglass-half"></i> Awaiting
+                    <span class="tab-count" id="count-awaiting">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('completed', this)">
+                    <i class="fa-solid fa-circle-check"></i> Completed
+                    <span class="tab-count" id="count-completed">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterSessions('declined', this)">
+                    <i class="fa-solid fa-xmark"></i> Declined
+                    <span class="tab-count" id="count-declined">0</span>
+                </button>
+            </div>
+
+            <!-- Sessions list -->
+            <div class="sessions-list" id="sessionsContainer">
+                <div class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <h3>Loading sessions…</h3>
+                </div>
+            </div>
+
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- ══ FEEDBACK MODAL ══ -->
+    <div class="modal-overlay" id="feedbackModal" onclick="handleModalClick(event)">
+        <div class="modal-box">
+
+            <div class="modal-head">
+                <div class="modal-head-left">
+                    <div class="modal-icon">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <h2>Leave Feedback</h2>
+                        <p>Session with <span id="feedbackTutorName">—</span></p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeFeedbackModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <p class="rating-prompt">How was your experience?</p>
+                <div class="star-row" id="starRow">
+                    <button class="star-btn" onclick="setRating(1)" data-val="1">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button class="star-btn" onclick="setRating(2)" data-val="2">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button class="star-btn" onclick="setRating(3)" data-val="3">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button class="star-btn" onclick="setRating(4)" data-val="4">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button class="star-btn" onclick="setRating(5)" data-val="5">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                </div>
+                <div class="rating-label" id="ratingLabel">Tap a star to rate</div>
+
+                <label class="m-label" for="feedbackComment">Comment <span class="m-label-opt">(optional)</span></label>
+                <textarea class="m-textarea" id="feedbackComment" placeholder="Share your experience…"></textarea>
+
+                <div class="modal-btns">
+                    <button class="btn-cancel" onclick="closeFeedbackModal()">Cancel</button>
+                    <button class="btn-submit" id="submitFeedbackBtn" onclick="submitFeedback()">
+                        <i class="fa-solid fa-paper-plane"></i> Submit
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/sessions.js"></script>
+
+</body>
+</html>

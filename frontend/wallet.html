@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet & Escrow | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Ethers + Contract -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="js/contract.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/wallet.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <!-- Role badge + nav — filled by JS -->
+        <div id="sidebarNavContent"></div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip">
+                <div class="sidebar-user-av" id="sidebarAv">
+                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                    <span id="sidebarInitials">KO</span>
+                </div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role" id="sidebarRole">Student</div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="topbar-page-title" id="pageTitle">Wallet & Escrow</span>
+            </div>
+            <div class="topbar-user" id="topBarName">…</div>
+        </header>
+
+        <!-- Scrollable -->
+        <div class="content-scroll">
+
+            <div class="page-header">
+                <h1 id="pageHeading">Wallet & Escrow</h1>
+                <p id="pageSubheading">Manage your crypto wallet and escrow transactions.</p>
+            </div>
+
+            <!-- ── Wallet hero ── -->
+            <div class="wallet-hero">
+                <div class="wallet-hero-strip"></div>
+                <div class="wallet-hero-body">
+
+                    <div class="wallet-left">
+                        <div class="wallet-eyebrow">
+                            <span class="eyebrow-line"></span>
+                            Wallet Balance
+                        </div>
+                        <div class="wallet-balance">
+                            <span id="walletBalanceNum">--</span>
+                            <span class="eth-unit"> ETH</span>
+                        </div>
+                        <div class="wallet-address-row">
+                            <div class="wallet-address" id="walletAddress">Not connected</div>
+                            <button class="copy-btn" id="copyBtn" style="display:none"
+                                onclick="copyAddress()" title="Copy address">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="wallet-right">
+                        <div class="network-chip" id="networkChip" style="display:none">
+                            <div class="net-dot"></div>
+                            <span id="networkName">Sepolia</span>
+                        </div>
+                        <button class="btn-connect" id="connectBtn" onclick="connectWallet()">
+                            <i class="fa-solid fa-wallet"></i> Connect Wallet
+                        </button>
+                    </div>
+
+                    <!-- Glow blobs -->
+                    <div class="hero-glow hero-glow-1"></div>
+                    <div class="hero-glow hero-glow-2"></div>
+                </div>
+            </div>
+
+            <!-- ── Stats ── -->
+            <div class="stats-grid">
+
+                <div class="stat-card orange">
+                    <div class="stat-icon-row">
+                        <div class="stat-mini-icon orange">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="lockedAmount">0.000 ETH</div>
+                    <div class="stat-label" id="lockedLabel">Locked in Escrow</div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-icon-row">
+                        <div class="stat-mini-icon green">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalSpent">0.000 ETH</div>
+                    <div class="stat-label" id="totalSpentLabel">Total Spent</div>
+                </div>
+
+                <div class="stat-card violet">
+                    <div class="stat-icon-row">
+                        <div class="stat-mini-icon violet">
+                            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalTxCount">0</div>
+                    <div class="stat-label">Total Transactions</div>
+                </div>
+
+            </div>
+
+            <!-- ── Transactions table ── -->
+            <div class="wallet-card">
+                <div class="wallet-card-head">
+                    <div>
+                        <div class="wallet-card-title">Escrow Transactions</div>
+                        <div class="wallet-card-sub">All on-chain payments</div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="partyHeader">Tutor</th>
+                                <th>Subject</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                            <tr>
+                                <td colspan="5">
+                                    <div class="table-state">
+                                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                                        Loading transactions…
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/wallet.js"></script>
+
+</body>
+</html>

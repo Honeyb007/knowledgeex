@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/help.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <!-- Role badge + nav — filled by JS -->
+        <div id="sidebarNavContent"></div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip">
+                <div class="sidebar-user-av" id="sidebarAv">
+                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                    <span id="sidebarInitials">KO</span>
+                </div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role" id="sidebarRole">Student</div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="breadcrumb">
+                    Support
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <strong>Help Center</strong>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable -->
+        <div class="content-scroll">
+            <div class="help-inner">
+
+                <!-- ── Hero ── -->
+                <div class="help-hero">
+                    <div class="hero-glow"></div>
+                    <div class="hero-inner">
+                        <div class="hero-eyebrow">
+                            <i class="fa-solid fa-headset"></i> Support
+                        </div>
+                        <h1>How can we help you?</h1>
+                        <p>Find answers to common questions about KnowledgeEx.</p>
+
+                        <div class="search-wrap">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input
+                                class="search-help"
+                                type="text"
+                                id="searchInput"
+                                placeholder="Search help articles…"
+                                oninput="searchFAQ(this.value)"
+                                autocomplete="off"
+                            >
+                            <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Quick links ── -->
+                <div class="quick-links" id="quickLinks">
+                    <div class="quick-card" onclick="scrollToCategory('booking')">
+                        <div class="quick-icon violet-icon">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                        </div>
+                        <h4>Booking Sessions</h4>
+                        <p>How to find and book tutors</p>
+                    </div>
+                    <div class="quick-card" onclick="scrollToCategory('payment')">
+                        <div class="quick-icon pink-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h4>Payments & Escrow</h4>
+                        <p>How crypto payments work</p>
+                    </div>
+                    <div class="quick-card" onclick="scrollToCategory('account')">
+                        <div class="quick-icon green-icon">
+                            <i class="fa-solid fa-circle-user"></i>
+                        </div>
+                        <h4>Account & Profile</h4>
+                        <p>Managing your account</p>
+                    </div>
+                </div>
+
+                <!-- ── FAQ ── -->
+                <div class="section-heading">
+                    Frequently Asked Questions
+                    <span class="faq-count" id="faqCount"></span>
+                </div>
+
+                <!-- No results state -->
+                <div class="no-results" id="noResults" style="display:none">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <p>No results for "<span id="noResultsQuery"></span>"</p>
+                    <button class="btn-clear-search" onclick="clearSearch()">Clear search</button>
+                </div>
+
+                <div class="faq-list" id="faqContainer">
+
+                    <!-- Booking -->
+                    <div class="faq-item" data-category="booking"
+                         data-text="book tutoring session find tutors how">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>How do I book a tutoring session?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Go to <strong>Find Tutors</strong> from your dashboard. Browse or search by course code or name. Click <strong>Book Session</strong>, fill in the subject, an optional message, and your preferred date — then confirm. Your payment locks into escrow automatically via the smart contract.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-category="booking"
+                         data-text="after booking session pending scheduled status what happens">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>What happens after I book a session?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Your booking enters <strong>Pending</strong> status. The tutor has 48 hours to accept or decline. Once accepted it becomes <strong>Scheduled</strong>. After the session, the tutor marks it complete — you then confirm to release payment from escrow to the tutor.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-category="booking"
+                         data-text="cancel booking reschedule refund">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>Can I cancel or reschedule a booking?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Tutors can decline pending bookings before accepting — your funds are returned automatically. Once scheduled, reach out to your tutor directly to reschedule. If the tutor doesn't respond within 48 hours, you can claim a refund via the smart contract on your Sessions page.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="faq-item" data-category="payment"
+                         data-text="payments crypto ethereum escrow smart contract how work">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>How do payments work on KnowledgeEx?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                KnowledgeEx uses <strong>Ethereum smart contracts</strong> for all payments. When you book, the ETH is locked in an on-chain escrow. Funds are only released to the tutor after you confirm the session was completed — protecting both parties with zero middlemen.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-category="payment"
+                         data-text="metamask wallet install connect ethereum what need">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>What wallet do I need to pay?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                You need <strong>MetaMask</strong> installed in your browser — it's a free digital wallet for Ethereum. Download it at <strong>metamask.io</strong>. Once installed, click <strong>Connect Wallet</strong> on your dashboard or wallet page to link it to KnowledgeEx.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-category="payment"
+                         data-text="not satisfied session dispute refund unhappy">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>What if I'm not satisfied with a session?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Payment stays locked in escrow until <em>you</em> confirm it. If unsatisfied, simply don't release the funds — and contact support with details. You can also leave an honest star rating so future learners know what to expect.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account -->
+                    <div class="faq-item" data-category="account"
+                         data-text="become tutor teach register sign up role apply">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>How do I become a tutor?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                During sign-up, select <strong>I want to Teach (Tutor)</strong> as your role. You'll get a tutor dashboard where you can set up your profile, add courses, set your hourly rate and availability, then start receiving booking requests immediately.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-category="account"
+                         data-text="tutor credibility rating stars sessions how calculated">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>How is tutor credibility determined?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Credibility is built on <strong>star ratings</strong> (1–5) and <strong>total sessions completed</strong>. After every session, learners can leave a rating and optional comment. The platform automatically calculates and displays the tutor's average — no admin verification needed.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-category="account"
+                         data-text="forgot password reset login email">
+                        <div class="faq-question" onclick="toggleFAQ(this.parentElement)">
+                            <span>I forgot my password. What do I do?</span>
+                            <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                On the login page, click <strong>Forgot password?</strong> and enter your registered email. You'll receive a reset link valid for 30 minutes. Click it, enter a new password, and you're back in.
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /faq-list -->
+
+                <!-- ── Contact ── -->
+                <div class="section-heading" style="margin-top: 12px;">Still need help?</div>
+
+                <div class="contact-grid">
+                    <div class="contact-card">
+                        <div class="contact-icon violet-contact">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="contact-label">Email Support</div>
+                            <div class="contact-sub">Get a response within 24 hours</div>
+                            <a class="contact-link" href="mailto:support@knowledgeex.com">
+                                support@knowledgeex.com
+                            </a>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon green-contact">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div>
+                            <div class="contact-label">WhatsApp Support</div>
+                            <div class="contact-sub">Chat with us directly</div>
+                            <a class="contact-link green-link"
+                               href="https://wa.me/2348141736141"
+                               target="_blank" rel="noopener">
+                                +234 814 173 6141
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 36px;"></div>
+
+            </div><!-- /help-inner -->
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/help.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In | KnowledgeEx</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<div class="auth-shell">
+
+    <!-- ══ LEFT — dark with image ══ -->
+    <div class="panel-left">
+        <div class="bg-img"></div>
+        <div class="bg-overlay"></div>
+
+        <a class="brand" href="index.html">
+                    <div class="brand-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+                    <span>KnowledgeEx</span>
+                </a>
+
+        <div class="left-quote">
+            <h2>Good to have<br>you <span class="grad">back.</span></h2>
+            <p>Your sessions, earnings, and schedule are waiting. Sign in and pick up right where you left off.</p>
+
+            <div class="left-trust">
+                <div class="trust-item">
+                    <div class="trust-dot"><i class="fa-solid fa-check"></i></div>
+                    Smart contract escrow on every session
+                </div>
+                <div class="trust-item">
+                    <div class="trust-dot"><i class="fa-solid fa-check"></i></div>
+                    Only verified Fulafia students
+                </div>
+                <div class="trust-item">
+                    <div class="trust-dot"><i class="fa-solid fa-check"></i></div>
+                    Your wallet, your funds — always
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ RIGHT — white, perfectly centered ══ -->
+    <div class="panel-right">
+        <div class="form-wrap">
+
+            <div class="form-eyebrow">Welcome back</div>
+            <h1>Sign in to your<br>account</h1>
+            <p class="form-sub">
+                Don't have an account? <a href="register.html">Sign up free →</a>
+            </p>
+
+            <form onsubmit="handleLogin(event)">
+
+                <div class="field">
+                    <label class="f-label">Email Address</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-envelope field-icon"></i>
+                        <input type="email" id="loginEmail"
+                               placeholder="you@fulafia.edu.ng" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="f-label">Password</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" id="loginPassword"
+                               class="has-eye" placeholder="Your password" required>
+                        <button type="button" class="eye-btn"
+                                onclick="togglePass('loginPassword','eyeIcon')">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-meta">
+                    <label class="remember">
+                        <input type="checkbox">
+                        <span>Remember me</span>
+                    </label>
+                    <a class="forgot-link" href="forgot-password.html">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Log In
+                </button>
+
+            </form>
+
+            <div class="form-footer">
+                &copy; <span id="year"></span> KnowledgeEx &mdash; Federal University of Lafia
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

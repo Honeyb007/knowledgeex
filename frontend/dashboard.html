@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | KnowledgeEx</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Ethers + Contracts -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="js/contract.js"></script>
+    <script src="js/wallet-connect.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" href="#" onclick="navigateTo('index.html')">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            KnowledgeEx
+        </a>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Main Menu</div>
+            <ul class="sidebar-links">
+                <li class="active">
+                    <a href="#" onclick="navigateTo('dashboard.html')">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('marketplace.html')">
+                        <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('sessions.html')">
+                        <i class="fa-solid fa-calendar-days"></i> My Sessions
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('wallet.html')">
+                        <i class="fa-solid fa-wallet"></i> Wallet & Escrow
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+            <div class="sidebar-label">Account</div>
+            <ul class="sidebar-links">
+                <li>
+                    <a href="#" onclick="navigateTo('profile.html')">
+                        <i class="fa-solid fa-circle-user"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('help.html')">
+                        <i class="fa-solid fa-circle-question"></i> Help Center
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
+                <div class="sidebar-user-av" id="sidebarAv">
+                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                    <span id="sidebarInitials">KO</span>
+                </div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-user-role">Student</div>
+                </div>
+            </div>
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="ham-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="topbar-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search courses, tutors…" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <button id="connectWalletBtn" onclick="connectWallet()">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span id="walletBtnText">Connect Wallet</span>
+                </button>
+
+                <div class="topbar-profile" onclick="navigateTo('profile.html')">
+                    <div class="topbar-av" id="topbarAv">
+                        <img src="" alt="" id="topbarAvImg" onerror="this.style.display='none'">
+                        <span id="topbarInitials">KO</span>
+                    </div>
+                    <div>
+                        <div class="topbar-profile-name" id="topbarName">Loading…</div>
+                        <div class="topbar-profile-role">Student</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable content -->
+        <div class="content-scroll">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <div class="greeting" id="greetingText">Good day 👋</div>
+                <h1 id="pageGreeting">Welcome back</h1>
+                <p class="page-header-sub">Here's what's happening with your learning today.</p>
+            </div>
+
+            <!-- ── Stat cards ── -->
+            <div class="stats-grid">
+
+                <div class="stat-card violet">
+                    <div class="stat-top">
+                        <div class="stat-icon violet">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div class="stat-trend live">
+                            <i class="fa-solid fa-circle" style="font-size:7px;"></i> Live
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="walletBalanceDisplay">0.0000 ETH</div>
+                        <div class="stat-label">Wallet Balance</div>
+                    </div>
+                </div>
+
+                <div class="stat-card orange">
+                    <div class="stat-top">
+                        <div class="stat-icon orange">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fa-solid fa-shield-halved"></i> Escrow
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="lockedInEscrow">0.000 ETH</div>
+                        <div class="stat-label">Locked in Escrow</div>
+                    </div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-top">
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fa-solid fa-arrow-up"></i> Total
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="sessionsCompleted">0</div>
+                        <div class="stat-label">Sessions Completed</div>
+                    </div>
+                </div>
+
+                <div class="stat-card pink">
+                    <div class="stat-top">
+                        <div class="stat-icon pink">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div class="stat-trend pink-trend">
+                            <i class="fa-solid fa-calendar"></i> Upcoming
+                        </div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="upcomingSessions">0</div>
+                        <div class="stat-label">Upcoming Sessions</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Bottom grid ── -->
+            <div class="bottom-grid">
+
+                <!-- Transactions table -->
+                <div class="dash-card">
+                    <div class="dash-card-head">
+                        <div class="dash-card-title">Escrow Transactions</div>
+                        <a class="card-action" onclick="navigateTo('wallet.html')">View all →</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tutor</th>
+                                    <th>Course</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="table-state">
+                                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                                            Loading transactions…
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pending actions -->
+                <div class="dash-card">
+                    <div class="dash-card-head">
+                        <div class="dash-card-title">Pending Actions</div>
+                        <span class="pending-badge" id="pendingCount">0</span>
+                    </div>
+                    <div class="pending-body" id="pendingActions">
+                        <div class="table-state">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            Loading…
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /content-scroll -->
+    </div><!-- /main-content -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/dashboard.js"></script>
+
+</body>
+</html>

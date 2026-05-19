@@ -1,0 +1,443 @@
+/* ============================================================
+   tutor_sessions.css — KnowledgeEx Tutor Schedule
+   Light surface · Violet + Pastel Pink · No blue
+   Depends on: base.css, components.css, sidebar.css
+   ============================================================ */
+
+/* ============================================================
+   1. APP SHELL
+   ============================================================ */
+body {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--bg-page);
+    font-family: var(--font-body);
+    animation: pageIn 0.28s ease both;
+}
+
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   2. TOPBAR EXTRAS
+   ============================================================ */
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.topbar-page-title {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.topbar-welcome {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Tutor mode badge in sidebar */
+.tutor-mode-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--success-soft);
+    border: 1px solid var(--success-border);
+    border-radius: 10px;
+    padding: 9px 14px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--success);
+}
+
+.tutor-role {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--success) !important;
+}
+
+/* ============================================================
+   3. STATS ROW
+   ============================================================ */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* Colour variants — inherits .stat-card from components.css */
+.stat-card.orange .stat-icon { background: var(--warning-soft); color: var(--warning); }
+.stat-card.orange::after     { background: var(--warning); }
+
+.stat-card.violet .stat-icon { background: var(--accent-soft);  color: var(--accent); }
+.stat-card.violet::after     { background: var(--accent); }
+
+.stat-card.green .stat-icon  { background: var(--success-soft); color: var(--success); }
+.stat-card.green::after      { background: var(--success); }
+
+.stat-trend {
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 3px;
+    color: var(--text-muted);
+}
+.stat-trend.warn         { color: var(--warning); }
+.stat-trend.up           { color: var(--success); }
+.stat-trend.violet-trend { color: var(--accent); }
+
+/* ============================================================
+   4. FILTER TABS
+   ============================================================ */
+.filter-tabs {
+    display: flex; gap: 6px;
+    margin-bottom: 22px; flex-wrap: wrap;
+}
+
+.tab-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-hover);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+}
+
+.tab-btn i { font-size: 11px; }
+
+.tab-count {
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    padding: 1px 7px; border-radius: 10px;
+    font-size: 10px; font-weight: 700;
+    min-width: 18px; text-align: center;
+}
+
+.tab-btn:hover {
+    border-color: var(--accent-border);
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.tab-btn.active {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.tab-btn.active .tab-count {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+}
+
+/* ============================================================
+   5. SESSION CARDS — light surface
+   ============================================================ */
+.sessions-list {
+    display: flex; flex-direction: column;
+    gap: 14px; padding-bottom: 32px;
+}
+
+.session-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    animation: cardIn 0.35s ease both;
+}
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.session-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-border);
+    box-shadow: 0 8px 28px rgba(124, 58, 237, 0.08);
+}
+
+/* Top accent bar */
+.card-accent { height: 3px; width: 100%; }
+.accent-pending   { background: var(--warning); }
+.accent-scheduled { background: var(--accent); }
+.accent-awaiting  { background: var(--pink); }
+.accent-completed { background: var(--success); }
+.accent-declined  { background: var(--danger); }
+
+/* Card body */
+.card-body { padding: 20px 22px; }
+
+.session-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 16px; gap: 12px;
+}
+
+.session-learner { display: flex; align-items: center; gap: 12px; }
+
+/* Learner avatar — green tint for tutor view */
+.learner-av {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: var(--success-soft);
+    border: 1px solid var(--success-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 15px; font-weight: 800;
+    color: var(--success); flex-shrink: 0;
+    letter-spacing: -0.02em;
+}
+
+.learner-name {
+    font-family: var(--font-heading);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary); margin-bottom: 2px;
+}
+
+.learner-info { font-size: 12px; color: var(--text-muted); }
+
+/* Status badges */
+.status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: var(--radius-full);
+    font-size: 11px; font-weight: 700;
+    white-space: nowrap; flex-shrink: 0;
+}
+.status-badge i { font-size: 9px; }
+
+.s-pending   { background: var(--warning-soft);  color: var(--warning);  border: 1px solid var(--warning-border); }
+.s-scheduled { background: var(--accent-soft);   color: var(--accent);   border: 1px solid var(--accent-border); }
+.s-awaiting  { background: var(--pink-soft);     color: var(--pink-dark);border: 1px solid var(--pink-border); }
+.s-completed { background: var(--success-soft);  color: var(--success);  border: 1px solid var(--success-border); }
+.s-declined  { background: var(--danger-soft);   color: var(--danger);   border: 1px solid var(--danger-border); }
+
+/* Detail chips */
+.session-details {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.detail-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px;
+    flex: 1; min-width: 110px;
+    transition: border-color 0.2s;
+}
+.detail-chip:hover { border-color: var(--accent-border); }
+
+.detail-chip i { color: var(--accent); font-size: 13px; flex-shrink: 0; }
+
+.detail-chip-label {
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 2px;
+}
+
+.detail-chip-value {
+    font-size: 13px; font-weight: 700; color: var(--text-primary);
+}
+
+/* Message quote */
+.session-message {
+    background: var(--bg-soft);
+    border-left: 2px solid var(--accent-border);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 13px; color: var(--text-secondary);
+    font-style: italic; line-height: 1.6;
+}
+
+/* Card footer */
+.card-divider { height: 1px; background: var(--border); }
+
+.card-footer {
+    padding: 14px 22px;
+    display: flex; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+    background: var(--bg-soft);
+}
+
+/* ── Action buttons — all flat ── */
+.btn-accept {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: var(--transition);
+    box-shadow: 0 2px 8px var(--accent-glow);
+}
+.btn-accept:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px var(--accent-glow);
+}
+.btn-accept:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn-complete {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px;
+    background: var(--success); color: #fff;
+    border: none; border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: var(--transition);
+    box-shadow: 0 2px 8px var(--success-soft);
+}
+.btn-complete:hover {
+    background: #0ea572;
+    transform: translateY(-1px);
+}
+.btn-complete:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Locked — session not started yet */
+.btn-complete-locked {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px;
+    background: var(--bg-muted);
+    border: 1px solid var(--border-hover);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+.btn-complete-locked i { color: var(--warning); }
+
+/* Decline button — pink on hover */
+.btn-decline {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-hover);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+}
+.btn-decline:hover {
+    background: var(--pink-soft);
+    color: var(--pink-dark);
+    border-color: var(--pink-border);
+}
+.btn-decline:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Status messages */
+.status-msg {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 500;
+    padding: 7px 12px; border-radius: var(--radius-sm);
+    line-height: 1.5;
+}
+.status-msg.waiting {
+    background: var(--warning-soft);
+    border: 1px solid var(--warning-border);
+    color: var(--warning);
+}
+.status-msg.success {
+    background: var(--success-soft);
+    border: 1px solid var(--success-border);
+    color: var(--success);
+}
+.status-msg.declined-msg {
+    background: var(--danger-soft);
+    border: 1px solid var(--danger-border);
+    color: var(--danger);
+}
+
+/* Countdown pill */
+.countdown-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    background: var(--warning-soft);
+    border: 1px solid var(--warning-border);
+    border-radius: var(--radius-full);
+    font-size: 11px; font-weight: 700;
+    color: var(--warning); margin-left: 6px;
+}
+
+/* Feedback display */
+.feedback-display {
+    display: flex; flex-direction: column; gap: 5px;
+    padding: 10px 14px;
+    background: var(--success-soft);
+    border: 1px solid var(--success-border);
+    border-radius: var(--radius-sm);
+}
+.feedback-stars { display: flex; gap: 3px; align-items: center; }
+.feedback-stars .fa-star      { color: var(--warning); font-size: 13px; }
+.feedback-stars .fa-star.empty { color: var(--text-muted); }
+.feedback-stars .rating-text {
+    font-size: 12px; font-weight: 700;
+    color: var(--success); margin-left: 6px;
+}
+.feedback-comment {
+    font-size: 12px; color: var(--text-secondary);
+    font-style: italic; line-height: 1.5;
+}
+
+/* Tx hash */
+.tx-hash {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--text-muted);
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 6px;
+    font-family: monospace;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 72px 20px;
+    text-align: center; color: var(--text-muted);
+}
+.empty-state i {
+    font-size: 36px; margin-bottom: 16px;
+    display: block; opacity: 0.25;
+    color: var(--accent);
+}
+.empty-state h3 {
+    font-family: var(--font-heading);
+    font-size: 18px; font-weight: 700;
+    color: var(--text-secondary); margin-bottom: 8px;
+}
+.empty-state p { font-size: 14px; }
+
+/* ============================================================
+   6. RESPONSIVE
+   ============================================================ */
+@media (max-width: 1000px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .session-details { flex-direction: column; }
+}
+
+@media (max-width: 600px) {
+    .content-scroll { padding: 16px; }
+    .filter-tabs { gap: 4px; }
+    .tab-btn { font-size: 11px; padding: 6px 10px; }
+    .card-body { padding: 16px; }
+    .card-footer { padding: 12px 16px; }
+}

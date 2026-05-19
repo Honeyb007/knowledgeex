@@ -1,0 +1,496 @@
+/* ============================================================
+   auth.css — KnowledgeEx Login & Register
+   True 50/50 split, no scroll, violet+pink system
+   Depends on: base.css, components.css
+   ============================================================ */
+
+/* ============================================================
+   1. BASE SHELL — strict 50/50, full viewport
+   ============================================================ */
+body {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;           /* NO scroll ever */
+    background: var(--dark-bg);
+}
+
+.auth-shell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* ── LEFT PANEL — exactly half ── */
+.panel-left {
+    flex: 1;                    /* exactly 50% */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px 48px;
+    overflow: hidden;
+}
+
+/* Background image */
+.panel-left .bg-img {
+    position: absolute; inset: 0;
+    background: url('../assets/std.jpg') center / cover no-repeat;
+    opacity: 0.22;
+    z-index: 0;
+}
+
+/* Overlay: dark + violet bottom-left glow + pink top-right hint */
+.panel-left .bg-overlay {
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 80% 60% at 0% 100%, rgba(124,58,237,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 0%, rgba(244,165,165,0.10) 0%, transparent 50%),
+        linear-gradient(to bottom, rgba(15,10,30,0.30) 0%, rgba(15,10,30,0.88) 100%);
+    z-index: 1;
+}
+
+.panel-left > *:not(.bg-img):not(.bg-overlay) {
+    position: relative;
+    z-index: 2;
+}
+
+/* ── RIGHT PANEL — exactly half ── */
+.panel-right {
+    flex: 1;                    /* exactly 50% */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 40px 48px;
+    overflow: hidden;           /* NO scroll */
+}
+
+/* ============================================================
+   2. LEFT PANEL CONTENT
+   ============================================================ */
+
+/* Brand / logo */
+/* Brand */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+}
+.brand-icon {
+    width: 34px; height: 34px;
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: #fff;
+    box-shadow: 0 4px 12px var(--accent-glow);
+    flex-shrink: 0;
+}
+
+
+.auth-brand-name {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: -0.02em;
+}
+
+/* Quote / headline */
+.left-quote { }
+
+.left-quote h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 2.8vw, 38px);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    color: #fff;
+    margin-bottom: 14px;
+}
+
+/* Violet → pink gradient text — mirrors the logo */
+.left-quote h2 .grad {
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.left-quote p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.50);
+    line-height: 1.7;
+    max-width: 340px;
+}
+
+/* Stats grid (register only) */
+.left-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.left-stat {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+}
+.left-stat-val {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+.left-stat-lbl {
+    font-size: 10px;
+    color: rgba(255,255,255,0.38);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+/* Trust list */
+.left-trust {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.48);
+}
+.trust-dot {
+    width: 18px; height: 18px;
+    background: rgba(16,185,129,0.18);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.trust-dot i { color: var(--success); font-size: 8px; }
+
+/* ============================================================
+   3. RIGHT PANEL — FORM AREA
+   ============================================================ */
+.form-wrap {
+    width: 100%;
+    max-width: 360px;
+}
+
+/* Eyebrow label above heading */
+.form-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+}
+.form-eyebrow::before {
+    content: '';
+    width: 18px; height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* Heading */
+.form-wrap h1 {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+    line-height: 1.15;
+}
+
+.form-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+}
+.form-sub a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+.form-sub a:hover { text-decoration: underline; }
+
+/* Section label inside form */
+.field-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin: 14px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.field-group-label::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: var(--border);
+}
+
+/* Fields */
+.field { margin-bottom: 11px; }
+
+.f-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 5px;
+}
+
+/* Input wrapper with icon */
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.input-wrap .field-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 1;
+}
+.input-wrap input,
+.input-wrap select {
+    width: 100%;
+    padding: 10px 12px 10px 34px;
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 13px;
+    transition: var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+}
+.input-wrap input::placeholder { color: var(--text-disabled); }
+.input-wrap input:focus,
+.input-wrap select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-white);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Select chevron */
+.input-wrap.is-select::after {
+    content: '\f107';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    color: var(--text-muted);
+    font-size: 11px;
+    pointer-events: none;
+}
+
+/* Eye toggle */
+.eye-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    transition: color 0.2s;
+}
+.eye-btn:hover { color: var(--text-secondary); }
+.input-wrap input.has-eye { padding-right: 36px; }
+
+/* Two column row */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* ── Role selector — compact horizontal pills ── */
+.role-picker {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 11px;
+}
+.role-pill {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+}
+.role-pill:hover { border-color: var(--accent-border); }
+.role-pill.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.role-pill-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+.role-pill.selected .role-pill-icon {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+}
+.role-pill-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+.role-pill-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+.role-pill.selected .role-pill-label { color: var(--accent); }
+
+/* Remember + forgot row */
+.form-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+}
+.remember input[type="checkbox"] {
+    width: 14px; height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+.remember span { font-size: 13px; color: var(--text-secondary); }
+.forgot-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+}
+.forgot-link:hover { text-decoration: underline; }
+
+/* Submit button — violet with pink glow on hover */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    margin-top: 4px;
+}
+.btn-submit:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--accent-glow), 0 2px 8px var(--pink-glow);
+}
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Footer note */
+.form-footer {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+.form-footer a { color: var(--accent); text-decoration: none; }
+.form-footer a:hover { text-decoration: underline; }
+
+/* ============================================================
+   4. RESPONSIVE
+   ============================================================ */
+@media (max-width: 860px) {
+    body {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        display: block;          /* kill flex so panel-right can go full width */
+    }
+
+    .auth-shell {
+        display: block;
+        min-height: 100vh;
+    }
+
+    .panel-left { display: none; }
+
+    .panel-right {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 24px;
+        overflow-y: auto;
+    }
+
+    .form-wrap {
+        max-width: 420px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 400px) {
+    .panel-right { padding: 32px 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .role-picker { flex-direction: column; }
+}
