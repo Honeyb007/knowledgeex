@@ -50,9 +50,9 @@ body {
     color: var(--success);
 }
 .sidebar-role-badge.learner {
-    background: var(--accent-soft);
-    border: 1px solid var(--accent-border);
-    color: var(--accent);
+    background: var(--pink-soft);
+    border: 1px solid var(--pink-border);
+    color: var(--pink);
 }
 
 /* ============================================================
@@ -220,7 +220,7 @@ body {
 
 /* Violet card */
 .quick-card:nth-child(1):hover { border-color: var(--accent-border); }
-.quick-card:nth-child(1)::before { background: var(--accent); }
+.quick-card:nth-child(1)::before { background: #1a1040; }
 
 /* Pink card */
 .quick-card:nth-child(2):hover { border-color: var(--pink-border); }
@@ -307,7 +307,7 @@ body {
 .btn-clear-search {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 18px;
-    background: var(--accent); color: #fff;
+    background: #1a1040; color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;

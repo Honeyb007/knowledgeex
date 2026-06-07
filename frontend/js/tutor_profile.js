@@ -52,14 +52,14 @@ function buildSidebarNav() {
         if (chipEl) chipEl.onclick = () => navigateTo('tutor_profile.html');
 
         nav.innerHTML = `
-            <div class="tutor-mode-badge">
+            <div class="sidebar-role-badge tutor">
                 <i class="fa-solid fa-chalkboard-user"></i> Tutor Account
             </div>
             <div class="sidebar-nav-group">
                 <div class="sidebar-label">Tutor Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('tutor_dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a></li>
                     <li><a href="#" onclick="navigateTo('tutor_sessions.html')">
                         <i class="fa-solid fa-calendar-days"></i> My Schedule
@@ -82,7 +82,7 @@ function buildSidebarNav() {
             </div>`;
     } else {
         /* Student viewing a tutor's profile */
-        if (roleEl) { roleEl.textContent = 'Student'; roleEl.style.color = 'var(--text-muted)'; }
+        if (roleEl) { roleEl.textContent = 'Learner'; roleEl.style.color = 'var(--pink)'; }
         if (chipEl) chipEl.onclick = () => navigateTo('profile.html');
 
         nav.innerHTML = `
@@ -90,7 +90,7 @@ function buildSidebarNav() {
                 <div class="sidebar-label">Main Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a></li>
                     <li><a href="#" onclick="navigateTo('marketplace.html')">
                         <i class="fa-solid fa-magnifying-glass"></i> Find Tutors

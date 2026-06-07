@@ -86,7 +86,7 @@ function buildUI() {
         setEl('totalSpentLabel','Total Earned');
 
         /* Sidebar role */
-        if (roleEl) { roleEl.textContent = 'Tutor'; roleEl.style.color = 'var(--success)'; }
+            if (roleEl) { roleEl.textContent = 'Tutor'; roleEl.classList.add('tutor'); }
         if (chipEl) chipEl.onclick = () => navigateTo('tutor_profile.html');
 
         nav.innerHTML = `
@@ -97,7 +97,7 @@ function buildUI() {
                 <div class="sidebar-label">Tutor Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('tutor_dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a></li>
                     <li><a href="#" onclick="navigateTo('tutor_sessions.html')">
                         <i class="fa-solid fa-calendar-days"></i> My Schedule
@@ -120,18 +120,18 @@ function buildUI() {
             </div>`;
     } else {
         /* Student */
-        if (roleEl) { roleEl.textContent = 'Student'; roleEl.style.color = 'rgba(255,255,255,0.6)'; }
+            if (roleEl) { roleEl.textContent = 'Learner'; roleEl.classList.add('learner'); }
         if (chipEl) chipEl.onclick = () => navigateTo('profile.html');
 
         nav.innerHTML = `
             <div class="sidebar-role-badge learner">
-                <i class="fa-solid fa-user-graduate"></i> Student
+                <i class="fa-solid fa-user-graduate"></i> Learner Account
             </div>
             <div class="sidebar-nav-group">
                 <div class="sidebar-label">Main Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a></li>
                     <li><a href="#" onclick="navigateTo('marketplace.html')">
                         <i class="fa-solid fa-magnifying-glass"></i> Find Tutors

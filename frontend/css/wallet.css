@@ -81,7 +81,7 @@ body {
    ============================================================ */
 .sidebar {
     width: var(--sidebar-w);
-    background: var(--accent);
+    background: #1a1040;
     display: flex; flex-direction: column;
     padding: 24px 16px;
     flex-shrink: 0; position: relative;
@@ -89,22 +89,9 @@ body {
     overflow: hidden;
 }
 
-.sidebar::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-    background-size: 24px 24px;
-    pointer-events: none; z-index: 0;
-}
 
-.sidebar::after {
-    content: '';
-    position: absolute; bottom: -60px; left: 50%;
-    transform: translateX(-50%);
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(244,165,165,0.16) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-}
+
+
 
 .sidebar > * { position: relative; z-index: 1; }
 
@@ -138,9 +125,9 @@ body {
     color: var(--success);
 }
 .sidebar-role-badge.learner {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #fff;
+    background: var(--pink-soft);
+    border: 1px solid var(--pink-border);
+    color: var(--pink);
 }
 
 .sidebar-nav-group { margin-bottom: 24px; }
@@ -408,7 +395,7 @@ body {
 .btn-connect {
     display: flex; align-items: center; gap: 8px;
     padding: 11px 20px;
-    background: var(--accent); color: #fff;
+    background: #1a1040; color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;

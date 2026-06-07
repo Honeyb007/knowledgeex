@@ -80,7 +80,7 @@ body {
    ============================================================ */
 .sidebar {
     width: var(--sidebar-w);
-    background: var(--accent);
+    background: #1a1040;
     display: flex;
     flex-direction: column;
     padding: 24px 16px;
@@ -91,23 +91,9 @@ body {
     overflow: hidden;
 }
 
-.sidebar::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-    background-size: 24px 24px;
-    pointer-events: none; z-index: 0;
-}
 
-.sidebar::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: 50%;
-    transform: translateX(-50%);
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(244,165,165,0.16) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-}
+
+
 
 .sidebar > * { position: relative; z-index: 1; }
 
@@ -248,7 +234,7 @@ body {
 .btn-book-new {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 18px;
-    background: var(--accent); color: #fff;
+    background: #1a1040; color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;
@@ -487,7 +473,7 @@ body {
 .btn-feedback {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 18px;
-    background: var(--accent); color: #fff;
+    background: #1a1040; color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;
@@ -586,7 +572,7 @@ body {
 .btn-find-tutor {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 10px 22px;
-    background: var(--accent); color: #fff;
+    background: #1a1040; color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;
@@ -802,4 +788,27 @@ body {
     .card-body { padding: 16px 16px 12px; }
     .card-footer { padding: 12px 16px; }
     .card-divider { margin: 0 16px; }
+}
+
+/* Role badge inside sidebar nav content */
+.sidebar-role-badge {
+    display: flex; align-items: center; gap: 8px;
+    border-radius: 10px; padding: 9px 14px;
+    margin-bottom: 24px;
+    font-size: 12px; font-weight: 700;
+}
+.sidebar-role-badge.tutor {
+    background: var(--success-soft);
+    border: 1px solid var(--success-border);
+    color: var(--success);
+}
+.sidebar-role-badge.learner {
+    background: var(--pink-soft);
+    border: 1px solid var(--pink-border);
+    color: var(--pink);
+}
+.sidebar-role-badge.lecturer {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
 }

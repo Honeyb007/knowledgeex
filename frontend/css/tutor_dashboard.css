@@ -24,7 +24,7 @@ body {
 /* ============================================================
    2. TUTOR MODE BADGE — sidebar
    ============================================================ */
-.tutor-mode-badge {
+.tutor-mode-badge, .sidebar-role-badge.tutor {
     display: flex;
     align-items: center;
     gap: 8px;

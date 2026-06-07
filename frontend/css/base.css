@@ -72,8 +72,8 @@
     --dark-text-secondary: #a89ec8;
     --dark-text-muted:     #5c5278;
 
-    /* ── Sidebar (violet) ── */
-    --sidebar-bg:      #7c3aed;   /* Solid violet */
+    /* ── Sidebar (dark violet) — unified across pages ── */
+    --sidebar-bg:      #1a1040;   /* Dark violet (unified) */
     --sidebar-active:  rgba(255, 255, 255, 0.18);
     --sidebar-hover:   rgba(255, 255, 255, 0.10);
     --sidebar-text:    rgba(255, 255, 255, 0.75);

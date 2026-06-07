@@ -56,8 +56,16 @@ function populateSidebarUser(u) {
     if (sidebarInitials) sidebarInitials.textContent = initials;
 
     if (sidebarRole) {
-        sidebarRole.textContent = isTutor ? 'Tutor' : 'Student';
-        sidebarRole.style.color = isTutor ? 'var(--success)' : 'var(--text-muted)';
+        sidebarRole.textContent = isTutor ? 'Tutor' : 'Learner';
+        if (isTutor) {
+            sidebarRole.classList.remove('learner');
+            sidebarRole.classList.add('tutor');
+            sidebarRole.style.color = 'var(--success)';
+        } else {
+            sidebarRole.classList.remove('tutor');
+            sidebarRole.classList.add('learner');
+            sidebarRole.style.color = '';
+        }
     }
 
     if (sidebarAvImg && u.profileImage) {
@@ -85,7 +93,7 @@ function buildSidebarNav() {
                 <div class="sidebar-label">Tutor Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('tutor_dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a></li>
                     <li><a href="#" onclick="navigateTo('tutor_sessions.html')">
                         <i class="fa-solid fa-calendar-days"></i> My Schedule
@@ -111,14 +119,14 @@ function buildSidebarNav() {
 
         nav.innerHTML = `
             <div class="sidebar-role-badge learner">
-                <i class="fa-solid fa-user-graduate"></i> Student
+                <i class="fa-solid fa-user-graduate"></i> Learner Account
             </div>
             <div class="sidebar-nav-group">
                 <div class="sidebar-label">Main Menu</div>
                 <ul class="sidebar-links">
-                    <li><a href="#" onclick="navigateTo('dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
-                    </a></li>
+                        <li><a href="#" onclick="navigateTo('dashboard.html')">
+                            <i class="fa-solid fa-th"></i> Dashboard
+                        </a></li>
                     <li><a href="#" onclick="navigateTo('marketplace.html')">
                         <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
                     </a></li>

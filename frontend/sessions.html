@@ -35,12 +35,16 @@
             KnowledgeEx
         </a>
 
+        <div class="sidebar-role-badge learner">
+            <i class="fa-solid fa-user-graduate"></i> Learner
+        </div>
+
         <div class="sidebar-nav-group">
             <div class="sidebar-label">Main Menu</div>
             <ul class="sidebar-links">
                 <li>
                     <a href="#" onclick="navigateTo('dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a>
                 </li>
                 <li>
@@ -85,7 +89,7 @@
                 </div>
                 <div>
                     <div class="sidebar-user-name" id="sidebarName">Loading…</div>
-                    <div class="sidebar-user-role">Student</div>
+                    <div class="sidebar-user-role learner" id="sidebarRole" style="color:var(--pink); font-weight:700;">Learner</div>
                 </div>
             </div>
             <button class="sidebar-logout" onclick="logout()">

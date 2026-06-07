@@ -36,12 +36,16 @@
             KnowledgeEx
         </a>
 
+        <div class="sidebar-role-badge learner">
+            <i class="fa-solid fa-user-graduate"></i> Learner
+        </div>
+
         <div class="sidebar-nav-group">
             <div class="sidebar-label">Main Menu</div>
             <ul class="sidebar-links">
                 <li class="active">
                     <a href="#" onclick="navigateTo('dashboard.html')">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                        <i class="fa-solid fa-th"></i> Dashboard
                     </a>
                 </li>
                 <li>
@@ -79,14 +83,14 @@
         </div>
 
         <div class="sidebar-footer">
-            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
+                <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
                 <div class="sidebar-user-av" id="sidebarAv">
                     <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
                     <span id="sidebarInitials">KO</span>
                 </div>
                 <div>
                     <div class="sidebar-user-name" id="sidebarName">Loading…</div>
-                    <div class="sidebar-user-role">Student</div>
+                    <div class="sidebar-user-role learner" id="sidebarRole" style="color:var(--pink); font-weight:700;">Learner</div>
                 </div>
             </div>
             <button class="sidebar-logout" onclick="logout()">
@@ -108,9 +112,13 @@
                 <button class="ham-btn" onclick="toggleSidebar()">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                <div class="topbar-search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search courses, tutors…" autocomplete="off">
+                <div class="quick-actions">
+                    <button class="btn-ghost" onclick="navigateTo('marketplace.html')">
+                        <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
+                    </button>
+                    <button class="btn-ghost" onclick="navigateTo('sessions.html')">
+                        <i class="fa-solid fa-calendar-plus"></i> Book Session
+                    </button>
                 </div>
             </div>
 
@@ -127,7 +135,7 @@
                     </div>
                     <div>
                         <div class="topbar-profile-name" id="topbarName">Loading…</div>
-                        <div class="topbar-profile-role">Student</div>
+                        <div class="topbar-profile-role">Learner</div>
                     </div>
                 </div>
             </div>
