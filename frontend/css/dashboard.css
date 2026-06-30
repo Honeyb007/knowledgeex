@@ -274,6 +274,19 @@ body {
 
 .topbar-left { display: flex; align-items: center; gap: 14px; }
 
+.topbar-greeting {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 4px;
+}
+
+.topbar-greeting h1 {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.1;
+}
+
 .ham-btn {
     display: none;
     background: none;

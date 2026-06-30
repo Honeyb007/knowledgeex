@@ -20,6 +20,10 @@ const STATUS = {
         cls: 's-scheduled', accentCls: 'accent-scheduled',
         icon: 'fa-calendar-check', label: 'Scheduled'
     },
+    passed: {
+        cls: 's-passed', accentCls: 'accent-passed',
+        icon: 'fa-hourglass-end', label: 'Session Passed'
+    },
     awaiting_confirmation: {
         cls: 's-awaiting', accentCls: 'accent-awaiting',
         icon: 'fa-hourglass-half', label: 'Awaiting Confirmation'
@@ -31,8 +35,30 @@ const STATUS = {
     declined: {
         cls: 's-declined', accentCls: 'accent-declined',
         icon: 'fa-xmark-circle', label: 'Declined'
+    },
+    refunded: {
+        cls: 's-refunded', accentCls: 'accent-refunded',
+        icon: 'fa-rotate-left', label: 'Refunded'
     }
 };
+
+function isSessionPast(booking) {
+    if (!booking?.scheduledAt) return false;
+    return Date.now() >= new Date(booking.scheduledAt).getTime();
+}
+
+function getBookingDisplayStatus(booking) {
+    if (!booking) return 'pending';
+
+    if (booking.status === 'refunded') return 'passed';
+    if (booking.status === 'completed') return 'completed';
+    if (booking.status === 'awaiting_confirmation') return 'awaiting_confirmation';
+    if (booking.status === 'declined') return 'declined';
+    if (booking.status === 'pending') return 'pending';
+    if (booking.status === 'scheduled' && isSessionPast(booking)) return 'passed';
+
+    return booking.status || 'scheduled';
+}
 
 /* ============================================================
    NAVIGATION
@@ -124,16 +150,19 @@ async function loadSessions() {
 function updateCounts(bookings) {
     const c = {
         all: bookings.length,
-        pending: 0, scheduled: 0,
-        awaiting: 0, completed: 0, declined: 0
+        pending: 0, scheduled: 0, passed: 0,
+        awaiting: 0, completed: 0, declined: 0, refunded: 0
     };
 
     bookings.forEach(b => {
-        if      (b.status === 'pending')               c.pending++;
-        else if (b.status === 'scheduled')             c.scheduled++;
-        else if (b.status === 'awaiting_confirmation') c.awaiting++;
-        else if (b.status === 'completed')             c.completed++;
-        else if (b.status === 'declined')              c.declined++;
+        const displayStatus = getBookingDisplayStatus(b);
+        if      (displayStatus === 'pending')               c.pending++;
+        else if (displayStatus === 'scheduled')            c.scheduled++;
+        else if (displayStatus === 'passed')               c.passed++;
+        else if (displayStatus === 'awaiting_confirmation') c.awaiting++;
+        else if (displayStatus === 'completed')            c.completed++;
+        else if (displayStatus === 'declined')             c.declined++;
+        else if (displayStatus === 'refunded')             c.refunded++;
     });
 
     /* Stat cards */
@@ -168,7 +197,8 @@ function renderSessions(bookings) {
     }
 
     container.innerHTML = bookings.map((b, i) => {
-        const s     = STATUS[b.status] || STATUS.pending;
+        const displayStatus = getBookingDisplayStatus(b);
+        const s = STATUS[displayStatus] || STATUS.pending;
         const inits = b.learner.firstName.charAt(0) + b.learner.lastName.charAt(0);
         const date  = new Date(b.scheduledAt).toLocaleDateString('en-US', {
             weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
@@ -180,7 +210,7 @@ function renderSessions(bookings) {
         const actionsHtml = buildActions(b);
 
         return `
-            <div class="session-card" data-status="${b.status}" style="animation-delay:${i * 0.05}s">
+            <div class="session-card" data-status="${displayStatus}" style="animation-delay:${i * 0.05}s">
                 <div class="card-accent ${s.accentCls}"></div>
                 <div class="card-body">
                     <div class="session-top">
@@ -242,13 +272,14 @@ function buildActions(b) {
     const now         = Date.now();
     const sessionTime = new Date(b.scheduledAt).getTime();
     const isPast      = now >= sessionTime;
+    const displayStatus = getBookingDisplayStatus(b);
     const timeUntilMs = sessionTime - now;
     const minsLeft    = Math.ceil(timeUntilMs / (1000 * 60));
     const timeLabel   = minsLeft < 60
         ? `${minsLeft}m`
         : `${Math.ceil(minsLeft / 60)}h`;
 
-    switch (b.status) {
+    switch (displayStatus) {
 
         case 'pending':
             return `
@@ -264,16 +295,23 @@ function buildActions(b) {
         case 'scheduled':
             if (isPast) {
                 return `
-                    <button class="btn-complete" id="complete-${b._id}"
-                        onclick="markComplete('${b._id}')">
-                        <i class="fa-solid fa-check-double"></i> Mark as Complete
-                    </button>`;
+                    <span class="status-msg waiting">
+                        <i class="fa-solid fa-hourglass-end"></i>
+                        Session has passed. Completion is no longer available.
+                    </span>`;
             }
             return `
                 <button class="btn-complete-locked" disabled>
                     <i class="fa-solid fa-clock"></i>
                     Available in ${timeLabel}
                 </button>`;
+
+        case 'passed':
+            return `
+                <span class="status-msg waiting">
+                    <i class="fa-solid fa-hourglass-end"></i>
+                    Session has passed. Completion is no longer available.
+                </span>`;
 
         case 'awaiting_confirmation':
             return `
@@ -303,7 +341,7 @@ function buildActions(b) {
                 html = `
                     <span class="status-msg success">
                         <i class="fa-solid fa-circle-check"></i>
-                        Session completed — awaiting learner feedback.
+                        Session completed — no comment yet.
                     </span>`;
             }
             if (b.txHash) {
@@ -321,6 +359,13 @@ function buildActions(b) {
                 <span class="status-msg declined-msg">
                     <i class="fa-solid fa-xmark"></i>
                     You declined this booking.
+                </span>`;
+
+        case 'refunded':
+            return `
+                <span class="status-msg refunded-msg">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Learner refunded this session.
                 </span>`;
 
         default:
@@ -418,7 +463,13 @@ async function declineBooking(bookingId) {
 async function markComplete(bookingId) {
     /* Client-side time guard */
     const booking     = allBookings.find(b => b._id === bookingId);
+    const displayStatus = booking ? getBookingDisplayStatus(booking) : null;
     const sessionTime = booking ? new Date(booking.scheduledAt).getTime() : 0;
+
+    if (displayStatus === 'passed') {
+        showWarning('This session has already passed and cannot be marked complete again.');
+        return;
+    }
 
     if (sessionTime && Date.now() < sessionTime) {
         const minsLeft = Math.ceil((sessionTime - Date.now()) / (1000 * 60));

@@ -176,9 +176,11 @@ body {
 .card-accent { height: 3px; width: 100%; }
 .accent-pending   { background: var(--warning); }
 .accent-scheduled { background: var(--accent); }
+.accent-passed    { background: var(--warning); }
 .accent-awaiting  { background: var(--pink); }
 .accent-completed { background: var(--success); }
 .accent-declined  { background: var(--danger); }
+.accent-refunded  { background: var(--text-muted); }
 
 /* Card body */
 .card-body { padding: 20px 22px; }
@@ -221,9 +223,11 @@ body {
 
 .s-pending   { background: var(--warning-soft);  color: var(--warning);  border: 1px solid var(--warning-border); }
 .s-scheduled { background: var(--accent-soft);   color: var(--accent);   border: 1px solid var(--accent-border); }
+.s-passed    { background: var(--warning-soft);  color: var(--warning);  border: 1px solid var(--warning-border); }
 .s-awaiting  { background: var(--pink-soft);     color: var(--pink-dark);border: 1px solid var(--pink-border); }
 .s-completed { background: var(--success-soft);  color: var(--success);  border: 1px solid var(--success-border); }
 .s-declined  { background: var(--danger-soft);   color: var(--danger);   border: 1px solid var(--danger-border); }
+.s-refunded  { background: var(--bg-muted); color: var(--text-muted); border: 1px solid var(--border); }
 
 /* Detail chips */
 .session-details {
@@ -362,6 +366,11 @@ body {
     background: var(--danger-soft);
     border: 1px solid var(--danger-border);
     color: var(--danger);
+}
+.status-msg.refunded-msg {
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
 }
 
 /* Countdown pill */
