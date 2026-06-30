@@ -383,6 +383,12 @@ const markComplete = async (req, res) => {
         });
     }
 
+    if (now >= sessionTime) {
+        return res.status(400).json({
+            message: "This session has already passed and cannot be marked complete again."
+        });
+    }
+
     booking.status = "awaiting_confirmation";
     await booking.save();
 
