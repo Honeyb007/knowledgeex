@@ -44,18 +44,28 @@ const STATUS = {
 
 function isSessionPast(booking) {
     if (!booking?.scheduledAt) return false;
-    return Date.now() >= new Date(booking.scheduledAt).getTime();
+    const startMs = new Date(booking.scheduledAt).getTime();
+    const durationHours = Number(booking.duration) || 1;
+    const endMs = startMs + durationHours * 60 * 60 * 1000;
+    return Date.now() >= endMs;
 }
 
 function getBookingDisplayStatus(booking) {
     if (!booking) return 'pending';
 
-    if (booking.status === 'refunded') return 'passed';
+    if (booking.status === 'refunded') return 'refunded';
     if (booking.status === 'completed') return 'completed';
     if (booking.status === 'awaiting_confirmation') return 'awaiting_confirmation';
     if (booking.status === 'declined') return 'declined';
     if (booking.status === 'pending') return 'pending';
-    if (booking.status === 'scheduled' && isSessionPast(booking)) return 'passed';
+    if (booking.status === 'scheduled') {
+        const startMs = new Date(booking.scheduledAt).getTime();
+        const durationHours = Number(booking.duration) || 1;
+        const endMs = startMs + durationHours * 60 * 60 * 1000;
+        const expiryMs = endMs + 48 * 60 * 60 * 1000;
+        if (Date.now() >= expiryMs) return 'passed';
+        return 'scheduled';
+    }
 
     return booking.status || 'scheduled';
 }
@@ -271,7 +281,10 @@ function renderSessions(bookings) {
 function buildActions(b) {
     const now         = Date.now();
     const sessionTime = new Date(b.scheduledAt).getTime();
-    const isPast      = now >= sessionTime;
+    const sessionEndTime = sessionTime + (Number(b.duration) || 1) * 60 * 60 * 1000;
+    const completionDeadline = sessionEndTime + 48 * 60 * 60 * 1000;
+    const isPast      = now >= sessionEndTime;
+    const isExpired   = now >= completionDeadline;
     const displayStatus = getBookingDisplayStatus(b);
     const timeUntilMs = sessionTime - now;
     const minsLeft    = Math.ceil(timeUntilMs / (1000 * 60));
@@ -293,17 +306,31 @@ function buildActions(b) {
                 </button>`;
 
         case 'scheduled':
-            if (isPast) {
+            if (now < sessionTime) {
                 return `
-                    <span class="status-msg waiting">
-                        <i class="fa-solid fa-hourglass-end"></i>
-                        Session has passed. Completion is no longer available.
+                    <button class="btn-complete-locked" disabled>
+                        <i class="fa-solid fa-clock"></i>
+                        Starts in ${timeLabel}
+                    </button>`;
+            }
+            if (!isPast) {
+                return `
+                    <button class="btn-complete-locked" disabled>
+                        <i class="fa-solid fa-clock"></i>
+                        Available after session ends
+                    </button>`;
+            }
+            if (isExpired) {
+                return `
+                    <span class="status-msg danger">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Completion window expired — learner can request a refund.
                     </span>`;
             }
             return `
-                <button class="btn-complete-locked" disabled>
-                    <i class="fa-solid fa-clock"></i>
-                    Available in ${timeLabel}
+                <button class="btn-accept" id="complete-${b._id}" onclick="markComplete('${b._id}')">
+                    <i class="fa-solid fa-check-double"></i>
+                    Mark as Complete
                 </button>`;
 
         case 'passed':

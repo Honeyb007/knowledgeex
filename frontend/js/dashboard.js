@@ -1,6 +1,6 @@
 /* ============================================================
    dashboard.js — KnowledgeEx Student Dashboard
-   Auth · User · Bookings · Wallet · Sidebar
+   Auth · User · Bookings · Wallet · Schedule
    ============================================================ */
 
 /* ── Auth guard ── */
@@ -13,9 +13,9 @@ if (!user || !token) navigateTo('login.html');
    ============================================================ */
 function navigateTo(page) {
     document.body.style.opacity    = '0';
-    document.body.style.transform  = 'translateY(6px)';
-    document.body.style.transition = 'all 0.2s ease';
-    setTimeout(() => { window.location.href = page; }, 200);
+    document.body.style.transform  = 'translateY(4px)';
+    document.body.style.transition = 'all 0.18s ease';
+    setTimeout(() => { window.location.href = page; }, 180);
 }
 
 /* ============================================================
@@ -32,7 +32,7 @@ function closeSidebar() {
 }
 
 /* ============================================================
-   AUTH / USER
+   AUTH
    ============================================================ */
 function logout() {
     localStorage.removeItem('token');
@@ -40,58 +40,112 @@ function logout() {
     navigateTo('login.html');
 }
 
+/* ============================================================
+   POPULATE USER
+   ============================================================ */
 function populateUser(u) {
     if (!u) return;
     const initials  = u.firstName.charAt(0) + u.lastName.charAt(0);
     const shortName = `${u.firstName} ${u.lastName.charAt(0)}.`;
 
-    /* Page greeting */
-    const pageGreeting = document.getElementById('pageGreeting');
-    if (pageGreeting) pageGreeting.textContent = `Welcome back, ${u.firstName}`;
+    const ids = {
+        sidebarName:     shortName,
+        sidebarInitials: initials,
+        topbarName:      shortName,
+        topbarInitials:  initials,
+    };
 
-    /* Topbar */
-    const topbarName     = document.getElementById('topbarName');
-    const topbarInitials = document.getElementById('topbarInitials');
-    const topbarAvImg    = document.getElementById('topbarAvImg');
-    if (topbarName)     topbarName.textContent     = shortName;
-    if (topbarInitials) topbarInitials.textContent = initials;
-    if (topbarAvImg && u.profileImage) {
-        topbarAvImg.src           = u.profileImage;
-        topbarAvImg.style.display = 'block';
-        if (topbarInitials) topbarInitials.style.display = 'none';
-    }
+    Object.entries(ids).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    });
 
-    /* Sidebar */
-    const sidebarName     = document.getElementById('sidebarName');
-    const sidebarInitials = document.getElementById('sidebarInitials');
-    const sidebarAvImg    = document.getElementById('sidebarAvImg');
-    if (sidebarName)     sidebarName.textContent     = shortName;
-    if (sidebarInitials) sidebarInitials.textContent = initials;
-    if (sidebarAvImg && u.profileImage) {
-        sidebarAvImg.src           = u.profileImage;
-        sidebarAvImg.style.display = 'block';
-        if (sidebarInitials) sidebarInitials.style.display = 'none';
+    /* Avatar images */
+    if (u.profileImage) {
+        ['sidebarAvImg', 'topbarAvImg'].forEach(id => {
+            const img = document.getElementById(id);
+            if (img) {
+                img.src = u.profileImage;
+                img.style.display = 'block';
+            }
+        });
     }
 }
 
 populateUser(user);
 
-/* Sync if profile page updates localStorage */
+/* Sync across tabs */
 window.addEventListener('storage', e => {
     if (e.key === 'user' && e.newValue) {
         try { populateUser(JSON.parse(e.newValue)); } catch {}
     }
 });
 
-/* ── Time-of-day greeting ── */
+/* ── Time-of-day greeting (topbar) — matches tutor dashboard ── */
 (function setGreeting() {
-    const hour = new Date().getHours();
-    const word = hour < 12 ? 'Good morning 👋'
-               : hour < 17 ? 'Good afternoon 👋'
-               :              'Good evening 👋';
-    const el = document.getElementById('greetingText');
-    if (el) el.textContent = word;
+    const hour   = new Date().getHours();
+    const word   = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const nameEl = document.getElementById('topbarGreeting');
+    const subEl  = document.getElementById('topbarSub');
+    if (nameEl) nameEl.textContent = `${word}, ${user.firstName}!`;
+    if (subEl)  subEl.textContent  = "Here's what's happening with your learning today.";
 })();
+
+/* ============================================================
+   DATE HELPERS
+   ------------------------------------------------------------
+   IMPORTANT: never use Date#toISOString() for calendar-day
+   comparisons — it converts to UTC first, which silently shifts
+   the date backward or forward depending on the user's timezone
+   offset (e.g. Nigeria is UTC+1, so local midnight becomes
+   23:00 the previous day in UTC). Always build the key from the
+   LOCAL year/month/day components instead.
+   ============================================================ */
+function localDateKey(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+/* ============================================================
+   CONNECT WALLET
+   ============================================================ */
+async function connectWallet() {
+    const btn     = document.getElementById('connectWalletBtn');
+    const btnText = document.getElementById('walletBtnText');
+    const display = document.getElementById('walletBalance');
+
+    if (typeof window.ethereum === 'undefined') {
+        showError('Please install MetaMask to connect your wallet.');
+        return;
+    }
+
+    btnText.textContent = 'Connecting…';
+    btn.disabled        = true;
+
+    try {
+        const result = await connectAndSaveWallet();
+        if (!result) throw new Error('Connection cancelled');
+
+        const { provider, address } = result;
+        const balance = await provider.getBalance(address);
+        const eth     = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
+
+        if (display) display.textContent = eth;
+
+        btnText.textContent = `${address.substring(0, 6)}…${address.substring(38)}`;
+        btn.classList.add('connected');
+        btn.disabled = false;
+
+        showSuccess('Wallet connected! 🎉');
+
+    } catch (err) {
+        showError('Failed to connect wallet.');
+        btnText.textContent = 'Connect Wallet';
+        btn.disabled        = false;
+    }
+}
 
 /* ============================================================
    LOAD BOOKINGS
@@ -104,23 +158,29 @@ async function loadBookings() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const bookings = await res.json();
 
+        /* Stats */
         const completed = bookings.filter(b => b.status === 'completed');
-        const upcoming  = bookings.filter(b => b.status === 'scheduled');
         const escrow    = bookings
             .filter(b => ['pending', 'scheduled'].includes(b.status))
-            .reduce((sum, b) => sum + b.amount, 0);
+            .reduce((s, b) => s + b.amount, 0);
+        const upcoming  = bookings.filter(b => b.status === 'scheduled');
 
-        document.getElementById('sessionsCompleted').textContent = completed.length;
-        document.getElementById('upcomingSessions').textContent  = upcoming.length;
-        document.getElementById('lockedInEscrow').textContent    = `${escrow.toFixed(3)} ETH`;
+        const setEl = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        };
+
+        setEl('sessionsCompleted', completed.length);
+        setEl('lockedEscrow',      escrow.toFixed(3));
 
         renderTransactions(bookings);
-        renderPendingActions(bookings);
+        renderSchedule(upcoming);
 
     } catch (err) {
         console.error('Failed to load bookings:', err);
-        document.getElementById('transactionsBody').innerHTML = `
-            <tr><td colspan="5">
+        const tbody = document.getElementById('transactionsBody');
+        if (tbody) tbody.innerHTML = `
+            <tr><td colspan="4">
                 <div class="table-state">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     Failed to load. Is the backend running?
@@ -130,53 +190,53 @@ async function loadBookings() {
 }
 
 /* ============================================================
-   RENDER TRANSACTIONS TABLE
+   RENDER TRANSACTIONS
    ============================================================ */
 function renderTransactions(bookings) {
     const tbody = document.getElementById('transactionsBody');
+    if (!tbody) return;
 
-    if (!bookings.length) {
-        tbody.innerHTML = `
-            <tr><td colspan="5">
-                <div class="table-state">
-                    <i class="fa-solid fa-inbox"></i> No transactions yet.
-                </div>
-            </td></tr>`;
+    const recent = [...bookings]
+        .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt))
+        .slice(0, 5);
+
+    if (!recent.length) {
+        tbody.innerHTML = `<tr><td colspan="4">
+            <div class="table-state">
+                <i class="fa-solid fa-inbox"></i> No transactions yet.
+            </div>
+        </td></tr>`;
         return;
     }
 
-    const STATUS_MAP = {
-        completed: ['completed', 'fa-check',         'Released'],
-        pending:   ['pending',   'fa-clock',          'Pending'],
-        scheduled: ['scheduled', 'fa-calendar-check', 'Scheduled'],
+    const STATUS = {
+        pending:               ['pending',   'fa-clock',         'Pending'],
+        scheduled:             ['scheduled', 'fa-calendar-check','Scheduled'],
+        awaiting_confirmation: ['awaiting',  'fa-hourglass-half','Awaiting'],
+        completed:             ['completed', 'fa-circle-check',  'Released'],
+        declined:              ['cancelled', 'fa-xmark',         'Declined'],
+        refunded:              ['refunded',  'fa-rotate-left',   'Refunded'],
     };
 
-    /* Latest 4 only */
-    const preview = [...bookings]
-        .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt))
-        .slice(0, 4);
-
-    tbody.innerHTML = preview.map(b => {
-        const date  = new Date(b.scheduledAt).toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric'
-        });
-        const inits = b.tutor.firstName.charAt(0) + b.tutor.lastName.charAt(0);
-        const [cls, ico, label] = STATUS_MAP[b.status] || ['pending', 'fa-clock', b.status];
+    tbody.innerHTML = recent.map(b => {
+        const inits    = b.tutor.firstName.charAt(0) + b.tutor.lastName.charAt(0);
+        const [cls, ico, lbl] = STATUS[b.status] || ['pending', 'fa-clock', b.status];
 
         return `
             <tr>
                 <td>
-                    <div class="tutor-cell">
-                        <div class="tutor-init">${inits}</div>
-                        <div class="tutor-name">${b.tutor.firstName} ${b.tutor.lastName}</div>
+                    <div class="party-cell">
+                        <div class="party-av">${inits}</div>
+                        <div>
+                            <div class="party-name">${b.tutor.firstName} ${b.tutor.lastName}</div>
+                        </div>
                     </div>
                 </td>
                 <td>${b.subject}</td>
-                <td>${date}</td>
                 <td><span class="amount-cell">${b.amount} ETH</span></td>
                 <td>
                     <span class="status-pill ${cls}">
-                        <i class="fa-solid ${ico}"></i> ${label}
+                        <i class="fa-solid ${ico}"></i> ${lbl}
                     </span>
                 </td>
             </tr>`;
@@ -184,134 +244,98 @@ function renderTransactions(bookings) {
 }
 
 /* ============================================================
-   RENDER PENDING ACTIONS
+   RENDER SCHEDULE — horizontal week strip
    ============================================================ */
-function renderPendingActions(bookings) {
-    const container = document.getElementById('pendingActions');
-    const badge     = document.getElementById('pendingCount');
+function renderSchedule(upcoming) {
+    const body = document.getElementById('scheduleBody');
+    if (!body) return;
 
-    const awaiting  = bookings.filter(b => b.status === 'awaiting_confirmation');
-    const scheduled = bookings.filter(b => b.status === 'scheduled');
-    const total     = awaiting.length + scheduled.length;
+    /* Group bookings by LOCAL calendar date (not UTC) */
+    const byDate = {};
+    upcoming.forEach(b => {
+        const key = localDateKey(new Date(b.scheduledAt));
+        byDate[key] = byDate[key] || [];
+        byDate[key].push(b);
+    });
 
-    /* Badge */
-    badge.textContent = total;
-    badge.className   = total > 0 ? 'pending-badge has-items' : 'pending-badge';
-
-    if (!total) {
-        container.innerHTML = `
-            <div class="table-state" style="flex-direction:column; gap:8px; padding:40px 20px;">
-                <i class="fa-solid fa-circle-check" style="font-size:28px; color:var(--success); opacity:0.5;"></i>
-                All clear — no pending actions!
-            </div>`;
-        return;
+    /* Build 7-day week starting on Monday (local time throughout) */
+    const days = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const offset = (today.getDay() + 6) % 7; // 0 => Monday
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - offset);
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d);
     }
 
-    container.innerHTML = [
-        ...awaiting.map(b => `
-            <div class="action-item">
-                <div class="action-dot warn">
-                    <i class="fa-solid fa-exclamation"></i>
-                </div>
-                <div>
-                    <div class="action-title">Release Payment</div>
-                    <div class="action-sub">
-                        Confirm session with <strong>${b.tutor.firstName}</strong>
-                        for <strong>${b.subject}</strong>
-                    </div>
-                    <button class="btn-release" onclick="confirmSession('${b._id}')">
-                        <i class="fa-solid fa-unlock"></i> Release Funds
-                    </button>
-                </div>
-            </div>`),
+    const todayKey = localDateKey(today);
 
-        ...scheduled.map(b => {
-            const date = new Date(b.scheduledAt).toLocaleDateString('en-US', {
-                month: 'short', day: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
+    const calHtml = days.map(d => {
+        const key     = localDateKey(d);
+        const hasSess = !!(byDate[key] && byDate[key].length);
+        return `
+            <button class="cal-day${hasSess ? ' has-session' : ''}" data-date="${key}">
+                <div class="cal-day-name">${d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                <div class="cal-day-num">${d.getDate()}</div>
+                <span class="cal-dot"></span>
+            </button>`;
+    }).join('');
+
+    body.innerHTML = `
+        <div class="schedule-ui">
+            <div class="week-calendar" id="weekCalendar">${calHtml}</div>
+            <div class="schedule-list" id="daySessions"></div>
+        </div>`;
+
+    function renderDaySessions(dateKey) {
+        const list = document.getElementById('daySessions');
+        const sessions = byDate[dateKey] || [];
+        if (!sessions.length) {
+            list.innerHTML = `<div class="schedule-empty"><i class="fa-regular fa-calendar-xmark"></i>No sessions on this day.</div>`;
+            return;
+        }
+
+        sessions.sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+
+        list.innerHTML = sessions.map(s => {
+            const dt    = new Date(s.scheduledAt);
+            const hours = dt.getHours();
+            const mins  = String(dt.getMinutes()).padStart(2, '0');
+            const ampm  = hours >= 12 ? 'PM' : 'AM';
+            const h12   = hours % 12 || 12;
             return `
-                <div class="action-item">
-                    <div class="action-dot info">
-                        <i class="fa-solid fa-calendar"></i>
-                    </div>
+                <div class="session-item">
+                    <div class="session-time">${h12}:${mins} ${ampm}</div>
                     <div>
-                        <div class="action-title">${b.subject}</div>
-                        <div class="action-sub">
-                            ${date} · ${b.tutor.firstName} ${b.tutor.lastName}
-                        </div>
+                        <div class="session-title">${s.subject}</div>
+                        <div class="session-meta">With ${s.tutor ? `${s.tutor.firstName} ${s.tutor.lastName}` : s.learner?.firstName || 'Learner'}</div>
                     </div>
                 </div>`;
-        })
-    ].join('');
-}
+        }).join('');
+    }
 
-/* ============================================================
-   CONFIRM SESSION & RELEASE PAYMENT
-   ============================================================ */
-async function confirmSession(bookingId) {
-    if (!confirm('Confirm this session and release payment to the tutor?')) return;
-
-    try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer   = provider.getSigner();
-        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-        showInfo('Releasing funds from escrow…');
-        const tx = await contract.releasePayment(bookingId);
-        showInfo('Transaction submitted — waiting for confirmation…');
-        await tx.wait();
-
-        const res  = await fetch(`http://localhost:5000/api/bookings/${bookingId}/confirm`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ txHash: tx.hash })
+    document.querySelectorAll('#weekCalendar .cal-day').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#weekCalendar .cal-day').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderDaySessions(btn.dataset.date);
         });
-        const data = await res.json();
+    });
 
-        if (data.booking) {
-            showSuccess('Payment released! Tutor received their funds ✅');
-            loadBookings();
+    const todayBtn = document.querySelector(`#weekCalendar .cal-day[data-date="${todayKey}"]`);
+    if (todayBtn) {
+        todayBtn.classList.add('active');
+        renderDaySessions(todayKey);
+    } else if (days.length) {
+        const firstBtn = document.querySelector('#weekCalendar .cal-day');
+        if (firstBtn) {
+            firstBtn.classList.add('active');
+            renderDaySessions(firstBtn.dataset.date);
         }
-    } catch (err) {
-        showError('Error: ' + err.message);
     }
-}
-
-/* ============================================================
-   CONNECT WALLET
-   ============================================================ */
-async function connectWallet() {
-    const btn     = document.getElementById('connectWalletBtn');
-    const btnText = document.getElementById('walletBtnText');
-    const display = document.getElementById('walletBalanceDisplay');
-
-    btnText.textContent = 'Connecting…';
-    btn.disabled        = true;
-
-    const result = await connectAndSaveWallet();
-
-    if (!result) {
-        btnText.textContent = 'Connect Wallet';
-        btn.disabled        = false;
-        return;
-    }
-
-    const { provider, address } = result;
-    const balance = await provider.getBalance(address);
-    const eth     = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
-
-    btn.innerHTML = `
-        <i class="fa-solid fa-circle-check"></i>
-        <span>${address.substring(0, 6)}…${address.substring(38)}</span>`;
-    btn.classList.add('connected');
-    btn.disabled = false;
-
-    if (display) display.textContent = `${eth} ETH`;
 }
 
 /* ============================================================

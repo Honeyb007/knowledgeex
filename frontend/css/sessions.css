@@ -7,40 +7,24 @@
    0. DESIGN TOKENS
    ============================================================ */
 :root {
-    --accent:        #7c3aed;
-    --accent-dark:   #6d28d9;
-    --accent-light:  #a78bfa;
-    --accent-soft:   rgba(124, 58, 237, 0.12);
-    --accent-glow:   rgba(124, 58, 237, 0.22);
-    --accent-border: rgba(124, 58, 237, 0.28);
+    --accent:        var(--pink);
+    --accent-dark:   var(--pink-dark);
+    --accent-light:  var(--pink-light);
+    --accent-soft:   var(--pink-soft);
+    --accent-glow:   var(--pink-glow);
+    --accent-border: var(--pink-border);
 
-    --pink:          #f4a5a5;
-    --pink-dark:     #e87e7e;
-    --pink-soft:     rgba(244, 165, 165, 0.12);
-    --pink-border:   rgba(244, 165, 165, 0.30);
-    --pink-glow:     rgba(244, 165, 165, 0.22);
+    --bg-page:       var(--gray-50);
+    --bg-card:       var(--white);
+    --bg-card-2:     var(--gray-100);
+    --bg-input:      var(--white);
 
-    --success:       #10b981;
-    --success-soft:  rgba(16, 185, 129, 0.12);
-    --success-border:rgba(16, 185, 129, 0.28);
-    --warning:       #f59e0b;
-    --warning-soft:  rgba(245, 158, 11, 0.12);
-    --warning-border:rgba(245, 158, 11, 0.28);
-    --danger:        #ef4444;
-    --danger-soft:   rgba(239, 68, 68, 0.10);
-    --danger-border: rgba(239, 68, 68, 0.25);
+    --border:        var(--gray-200);
+    --border-hover:  var(--gray-300);
 
-    --bg-page:       #0f0a1e;
-    --bg-card:       #18122b;
-    --bg-card-2:     #1e1635;
-    --bg-input:      #231b3a;
-
-    --border:        rgba(255, 255, 255, 0.07);
-    --border-hover:  rgba(255, 255, 255, 0.13);
-
-    --text-primary:   #f0ecff;
-    --text-secondary: #a89ec8;
-    --text-muted:     #5c5278;
+    --text-primary:   var(--gray-900);
+    --text-secondary: var(--gray-600);
+    --text-muted:     var(--gray-400);
 
     --sidebar-w:     256px;
     --topbar-h:      64px;
@@ -48,9 +32,6 @@
     --radius-sm:     10px;
     --radius-full:   999px;
     --transition:    all 0.2s ease;
-
-    --font-heading:  'Syne', sans-serif;
-    --font-body:     'DM Sans', sans-serif;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,116 +56,13 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ============================================================
-   2. SIDEBAR — solid violet
-   ============================================================ */
-.sidebar {
-    width: var(--sidebar-w);
-    background: #1a1040;
-    display: flex;
-    flex-direction: column;
-    padding: 24px 16px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 100;
-    transition: left 0.3s ease;
-    overflow: hidden;
-}
-
-
-
-
-
+/* Sidebar visuals are provided by the shared `sidebar.css` to keep
+    navigation consistent across pages (dashboard, sessions, tutor views). */
+.sidebar { width: var(--sidebar-w); }
 .sidebar > * { position: relative; z-index: 1; }
 
-.sidebar-brand {
-    display: flex; align-items: center; gap: 10px;
-    font-family: var(--font-heading);
-    font-size: 17px; font-weight: 800; color: #fff;
-    margin-bottom: 32px; padding: 0 8px;
-    letter-spacing: -0.02em;
-}
-
-.sidebar-brand-icon {
-    width: 32px; height: 32px;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: #fff; flex-shrink: 0;
-}
-
-.sidebar-nav-group { margin-bottom: 28px; }
-
-.sidebar-label {
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.45);
-    padding: 0 10px; margin-bottom: 6px;
-}
-
-.sidebar-links { display: flex; flex-direction: column; gap: 2px; }
-
-.sidebar-links li a {
-    display: flex; align-items: center; gap: 11px;
-    padding: 10px 12px; border-radius: 10px;
-    color: rgba(255,255,255,0.72);
-    font-size: 14px; font-weight: 500;
-    transition: var(--transition);
-}
-
-.sidebar-links li a i { width: 18px; font-size: 15px; flex-shrink: 0; }
-
-.sidebar-links li a:hover { background: rgba(255,255,255,0.12); color: #fff; }
-
-.sidebar-links li.active a {
-    background: rgba(255,255,255,0.2);
-    color: #fff; font-weight: 700;
-    border: 1px solid rgba(255,255,255,0.25);
-}
-
-.sidebar-footer { margin-top: auto; }
-
-.sidebar-user-chip {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px; border-radius: 12px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.18);
-    margin-bottom: 10px; cursor: pointer;
-    transition: background 0.2s;
-}
-.sidebar-user-chip:hover { background: rgba(255,255,255,0.18); }
-
-.sidebar-user-av {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(255,255,255,0.25);
-    border: 1px solid rgba(255,255,255,0.35);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-heading);
-    font-size: 13px; font-weight: 700;
-    color: #fff; flex-shrink: 0;
-    overflow: hidden; position: relative;
-}
-
-.sidebar-user-av img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover; border-radius: 10px;
-}
-
-.sidebar-user-name { font-size: 13px; font-weight: 700; color: #fff; }
-.sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 1px; }
-
-.sidebar-logout {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px; border-radius: 10px;
-    color: rgba(255,255,255,0.65);
-    font-size: 14px; font-weight: 500;
-    cursor: pointer; border: none; background: none;
-    width: 100%; transition: var(--transition);
-    font-family: var(--font-body);
-}
-.sidebar-logout:hover { background: rgba(244,165,165,0.18); color: var(--pink); }
+/* Sidebar visuals (brand, links, user chip) are provided by the
+   shared `sidebar.css` so navigation appears identical across pages. */
 
 .sidebar-overlay {
     display: none; position: fixed; inset: 0;
@@ -198,13 +76,12 @@ body {
 .main-content {
     flex: 1; display: flex; flex-direction: column;
     overflow: hidden; min-width: 0;
+    background: var(--bg-page);
 }
 
 .topbar {
     height: var(--topbar-h);
-    background: rgba(15,10,30,0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--white);
     border-bottom: 1px solid var(--border);
     padding: 0 28px;
     display: flex; align-items: center;
@@ -216,13 +93,13 @@ body {
 
 .ham-btn {
     display: none;
-    background: none; border: 1px solid var(--border-hover);
+    background: none; border: 1px solid var(--border);
     border-radius: 8px; width: 36px; height: 36px;
     align-items: center; justify-content: center;
     cursor: pointer; color: var(--text-secondary);
     font-size: 15px; transition: var(--transition);
 }
-.ham-btn:hover { background: rgba(255,255,255,0.06); }
+.ham-btn:hover { background: var(--gray-50); }
 
 .topbar-page-title {
     font-family: var(--font-heading);
@@ -230,21 +107,21 @@ body {
     color: var(--text-primary); letter-spacing: -0.01em;
 }
 
-/* Book new session button — violet flat */
+/* Book new session button */
 .btn-book-new {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 18px;
-    background: #1a1040; color: #fff;
+    background: var(--pink);
+    color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;
     cursor: pointer; transition: var(--transition);
-    box-shadow: 0 2px 8px var(--accent-glow);
+    box-shadow: var(--shadow-pink);
 }
 .btn-book-new:hover {
-    background: var(--accent-dark);
+    background: var(--pink-dark);
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px var(--accent-glow);
 }
 
 /* ============================================================
@@ -329,6 +206,7 @@ body {
     overflow: hidden;
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     animation: cardIn 0.35s ease both;
+    box-shadow: var(--shadow-xs);
 }
 
 @keyframes cardIn {
@@ -452,36 +330,34 @@ body {
 
 /* ── Footer action elements ── */
 
-/* Release payment — pink (student confirms → releases to tutor) */
+/* Release payment */
 .btn-release {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 18px;
-    background: var(--pink-dark); color: #fff;
+    background: var(--pink); color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;
     cursor: pointer; transition: var(--transition);
-    box-shadow: 0 2px 8px var(--pink-glow);
+    box-shadow: var(--shadow-pink);
 }
 .btn-release:hover {
-    background: var(--pink);
+    background: var(--pink-dark);
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px var(--pink-glow);
 }
 
-/* Leave feedback — violet */
+/* Leave feedback */
 .btn-feedback {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 18px;
-    background: #1a1040; color: #fff;
+    background: var(--gray-900); color: #fff;
     border: none; border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 13px; font-weight: 700;
     cursor: pointer; transition: var(--transition);
-    box-shadow: 0 2px 8px var(--accent-glow);
 }
 .btn-feedback:hover {
-    background: var(--accent-dark);
+    background: var(--gray-700);
     transform: translateY(-1px);
 }
 
@@ -604,17 +480,15 @@ body {
 
 /* Glass modal */
 .modal-box {
-    background: rgba(30,22,53,0.52);
-    backdrop-filter: blur(32px) saturate(1.5);
-    -webkit-backdrop-filter: blur(32px) saturate(1.5);
-    border: 1px solid var(--pink-border);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(24px) saturate(1.1);
+    -webkit-backdrop-filter: blur(24px) saturate(1.1);
+    border: 1px solid var(--border);
     border-radius: 20px;
     width: 100%; max-width: 420px;
     animation: modalSlideUp 0.3s cubic-bezier(0.16,1,0.3,1);
     position: relative;
-    box-shadow:
-        0 28px 72px rgba(0,0,0,0.65),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: var(--shadow-lg);
 }
 
 /* Pink shimmer line */

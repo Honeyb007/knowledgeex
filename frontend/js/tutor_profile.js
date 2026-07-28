@@ -56,7 +56,7 @@ function buildSidebarNav() {
                 <i class="fa-solid fa-chalkboard-user"></i> Tutor Account
             </div>
             <div class="sidebar-nav-group">
-                <div class="sidebar-label">Tutor Menu</div>
+                <div class="sidebar-nav-label">Tutor Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('tutor_dashboard.html')">
                         <i class="fa-solid fa-th"></i> Dashboard
@@ -70,7 +70,7 @@ function buildSidebarNav() {
                 </ul>
             </div>
             <div class="sidebar-nav-group">
-                <div class="sidebar-label">Account</div>
+                <div class="sidebar-nav-label">Account</div>
                 <ul class="sidebar-links">
                     <li class="active"><a href="#">
                         <i class="fa-solid fa-circle-user"></i> Profile
@@ -87,7 +87,7 @@ function buildSidebarNav() {
 
         nav.innerHTML = `
             <div class="sidebar-nav-group">
-                <div class="sidebar-label">Main Menu</div>
+                <div class="sidebar-nav-label">Main Menu</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('dashboard.html')">
                         <i class="fa-solid fa-th"></i> Dashboard
@@ -104,7 +104,7 @@ function buildSidebarNav() {
                 </ul>
             </div>
             <div class="sidebar-nav-group">
-                <div class="sidebar-label">Account</div>
+                <div class="sidebar-nav-label">Account</div>
                 <ul class="sidebar-links">
                     <li><a href="#" onclick="navigateTo('profile.html')">
                         <i class="fa-solid fa-circle-user"></i> Profile

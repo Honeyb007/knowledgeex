@@ -81,6 +81,24 @@ const validateDateAgainstAvailability = (date, duration, availability) => {
   return null;
 };
 
+const getSessionTiming = (booking) => {
+  const scheduledAt = booking.scheduledAt instanceof Date ? booking.scheduledAt : new Date(booking.scheduledAt);
+  const sessionEnd = new Date(scheduledAt.getTime() + (booking.duration || 1) * 60 * 60 * 1000);
+  return { scheduledAt, sessionEnd };
+};
+
+const isPendingBookingExpired = (booking) => {
+  if (booking.status !== "pending") return false;
+  const createdAt = booking.createdAt instanceof Date ? booking.createdAt : new Date(booking.createdAt);
+  return Date.now() >= createdAt.getTime() + 48 * 60 * 60 * 1000;
+};
+
+const isScheduledSessionExpired = (booking) => {
+  if (booking.status !== "scheduled") return false;
+  const { sessionEnd } = getSessionTiming(booking);
+  return Date.now() >= sessionEnd.getTime() + 48 * 60 * 60 * 1000;
+};
+
 // Email transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -214,6 +232,13 @@ const getLearnerBookings = async (req, res) => {
       .populate("feedback")
       .sort({ createdAt: -1 });
 
+    for (const booking of bookings) {
+      if (isPendingBookingExpired(booking) || isScheduledSessionExpired(booking)) {
+        booking.status = "refunded";
+        await booking.save();
+      }
+    }
+
     res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -226,7 +251,15 @@ const getTutorBookings = async (req, res) => {
     const bookings = await Booking.find({ tutor: req.user.id })
       .populate("learner", "firstName lastName department level")
       .populate("tutorProfile", "courses hourlyRate")
+      .populate("feedback")
       .sort({ createdAt: -1 });
+
+    for (const booking of bookings) {
+      if (isPendingBookingExpired(booking) || isScheduledSessionExpired(booking)) {
+        booking.status = "refunded";
+        await booking.save();
+      }
+    }
 
     res.status(200).json(bookings);
   } catch (error) {
@@ -252,6 +285,12 @@ const acceptBooking = async (req, res) => {
 
     if (booking.status !== "pending") {
       return res.status(400).json({ message: "Booking is no longer pending" });
+    }
+
+    if (isPendingBookingExpired(booking)) {
+      booking.status = "refunded";
+      await booking.save();
+      return res.status(400).json({ message: "This booking expired and has been refunded to the learner." });
     }
 
     booking.status = "scheduled";
@@ -374,22 +413,22 @@ const markComplete = async (req, res) => {
     if (booking.status !== "scheduled") {
       return res.status(400).json({ message: "Session is not scheduled" });
     }
-    // Check if session time has passed
-    const now = new Date();
-    const sessionTime = new Date(booking.scheduledAt);
-    if (now < sessionTime) {
-        return res.status(400).json({ 
-            message: `Session is scheduled for ${sessionTime.toLocaleString('en-US', { weekday:'long', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' })}. You cannot mark it complete before the session time.` 
-        });
-    }
 
-    if (now >= sessionTime) {
-        return res.status(400).json({
-            message: "This session has already passed and cannot be marked complete again."
-        });
+    const now = new Date();
+    const { sessionEnd } = getSessionTiming(booking);
+
+    if (now < sessionEnd) {
+      const minsLeft = Math.ceil((sessionEnd - now) / (1000 * 60));
+      const label = minsLeft < 60
+        ? `${minsLeft} minute${minsLeft !== 1 ? 's' : ''}`
+        : `${Math.ceil(minsLeft / 60)} hour${Math.ceil(minsLeft / 60) !== 1 ? 's' : ''}`;
+      return res.status(400).json({
+        message: `Session is still in progress. It can be marked complete after the session ends in ${label}.`
+      });
     }
 
     booking.status = "awaiting_confirmation";
+    booking.awaitingConfirmationSince = now;
     await booking.save();
 
     // Send email notification to learner
@@ -545,6 +584,16 @@ const refundBooking = async (req, res) => {
         }
 
         const { txHash } = req.body;
+        const now = new Date();
+        const createdAt = booking.createdAt instanceof Date ? booking.createdAt : new Date(booking.createdAt);
+
+        const isPendingExpired = booking.status === 'pending' && now >= createdAt.getTime() + 48 * 60 * 60 * 1000;
+        const isScheduledExpired = booking.status === 'scheduled' && now >= getSessionTiming(booking).sessionEnd.getTime() + 48 * 60 * 60 * 1000;
+
+        if (!isPendingExpired && !isScheduledExpired) {
+            return res.status(400).json({ message: "Refund is only available after the 48-hour window has passed for an unaccepted or unfinished scheduled session." });
+        }
+
         booking.status = 'refunded';
         booking.txHash = txHash || "";
         await booking.save();

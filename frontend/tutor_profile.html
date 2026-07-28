@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutor Profile | KnowledgeEx</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -36,20 +31,21 @@
             KnowledgeEx
         </a>
 
-        <!-- Filled by JS based on role context -->
-        <div id="sidebarNavContent"></div>
+        <a class="sidebar-user-chip" id="sidebarUserChip" href="#" onclick="navigateTo('tutor_profile.html')">
+            <div class="sidebar-user-av" id="sidebarAv">
+                <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                <span id="sidebarInitials">KO</span>
+            </div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                <div class="sidebar-user-meta" id="sidebarRole">Tutor</div>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+
+        <nav class="sidebar-nav" id="sidebarNavContent"></nav>
 
         <div class="sidebar-footer">
-            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
-                <div class="sidebar-user-av" id="sidebarAv">
-                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
-                    <span id="sidebarInitials">KO</span>
-                </div>
-                <div>
-                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
-                    <div class="sidebar-user-role" id="sidebarRole">Tutor</div>
-                </div>
-            </div>
             <button class="sidebar-logout" onclick="logout()">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
             </button>
@@ -80,232 +76,195 @@
         <!-- Scrollable -->
         <div class="content-scroll">
 
-            <div class="page-header">
-                <h1 id="pageTitle">Tutor Profile</h1>
-                <p id="pageSubtitle">Manage your profile and tutoring preferences.</p>
-            </div>
-
-            <div class="profile-grid">
-
-                <!-- ── Left card ── -->
-                <div class="left-card">
-
-                    <div class="avatar-section">
-                        <div class="avatar-glow"></div>
-
-                        <div class="avatar-wrap">
-                            <div class="avatar-fallback" id="avatarFallback">KO</div>
-                            <img class="avatar-img" id="avatarImg" src="" alt=""
-                                 onerror="this.style.display='none'; document.getElementById('avatarFallback').style.display='flex'">
-                            <label class="camera-btn" id="cameraBtn" title="Change photo">
-                                <i class="fa-solid fa-camera"></i>
-                                <input type="file" accept="image/*" onchange="uploadAvatar(event)">
-                            </label>
-                        </div>
-
-                        <div class="profile-name" id="profileName">—</div>
-                        <div class="role-badge">
-                            <i class="fa-solid fa-shield-check"></i> Verified Tutor
+            <!-- ── Profile header strip ── -->
+            <div class="profile-header">
+                <div class="ph-left">
+                    <div class="ph-avatar-wrap">
+                        <div class="avatar-fallback" id="avatarFallback">KO</div>
+                        <img class="avatar-img" id="avatarImg" src="" alt=""
+                             onerror="this.style.display='none'; document.getElementById('avatarFallback').style.display='flex'">
+                        <label class="camera-btn" id="cameraBtn" title="Change photo">
+                            <i class="fa-solid fa-camera"></i>
+                            <input type="file" accept="image/*" onchange="uploadAvatar(event)">
+                        </label>
+                    </div>
+                    <div class="ph-info">
+                        <div class="ph-name-row">
+                            <span class="profile-name" id="profileName">—</span>
+                            <span class="role-badge">
+                                <i class="fa-solid fa-shield-check"></i> Verified Tutor
+                            </span>
                         </div>
                         <div class="profile-sub" id="profileSub">—</div>
                     </div>
+                </div>
 
-                    <!-- Mini stats -->
-                    <div class="mini-stats">
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="totalSessions">0</div>
-                            <div class="mini-stat-label">Sessions</div>
+                <div class="ph-right">
+                    <div class="ph-stats">
+                        <div class="ph-stat">
+                            <div class="ph-stat-value" id="totalSessions">0</div>
+                            <div class="ph-stat-label">Sessions</div>
                         </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="tutorRating">—</div>
-                            <div class="mini-stat-label">Rating</div>
-                        </div>
-                    </div>
-
-                    <!-- Info rows -->
-                    <div class="info-rows">
-                        <div class="info-row">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <div>
-                                <div class="info-row-label">Department</div>
-                                <div class="info-row-value" id="profileDept">—</div>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <i class="fa-solid fa-id-card"></i>
-                            <div>
-                                <div class="info-row-label">Matric Number</div>
-                                <div class="info-row-value" id="profileMatric">—</div>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <i class="fa-solid fa-ethereum"></i>
-                            <div>
-                                <div class="info-row-label">Hourly Rate</div>
-                                <div class="info-row-value" id="profileRate">—</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Courses taught -->
-                    <div class="courses-section">
-                        <div class="courses-label">Courses Taught</div>
-                        <div class="courses-wrap" id="coursesDisplay">
-                            <span class="course-tag-empty">No courses listed</span>
+                        <div class="ph-divider"></div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value ph-stat-value--rating" id="tutorRating">—</div>
+                            <div class="ph-stat-label">Rating</div>
                         </div>
                     </div>
 
                     <!-- Book button — shown only when viewing another tutor -->
-                    <div class="book-section" id="bookSection" style="display:none;">
+                    <div class="ph-action" id="bookSection" style="display:none;">
                         <button class="btn-book-profile" onclick="navigateTo('marketplace.html')">
                             <i class="fa-solid fa-calendar-plus"></i> Book a Session
                         </button>
                     </div>
+                </div>
+            </div><!-- /profile-header -->
 
-                </div><!-- /left-card -->
+            <!-- ── Form cards ── -->
+            <div class="right-col">
 
-                <!-- ── Right column ── -->
-                <div class="right-col">
+                <!-- Personal info -->
+                <div class="form-card">
+                    <div class="section-head">
+                        <div class="section-icon violet-icon">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <h3>Personal Information</h3>
+                            <p>Update your name, contact and bio.</p>
+                        </div>
+                    </div>
 
-                    <!-- Personal info -->
-                    <div class="form-card">
-                        <div class="section-head">
-                            <div class="section-icon violet-icon">
-                                <i class="fa-solid fa-user"></i>
+                    <form onsubmit="saveProfile(event)" id="profileForm">
+                        <div class="form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="f-label" for="firstName">First Name</label>
+                                    <input class="f-input" type="text" id="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="f-label" for="lastName">Last Name</label>
+                                    <input class="f-input" type="text" id="lastName" required>
+                                </div>
                             </div>
-                            <div>
-                                <h3>Personal Information</h3>
-                                <p>Update your name, contact and bio.</p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="f-label" for="emailDisplay">Email Address</label>
+                                    <input class="f-input" type="email" id="emailDisplay" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="f-label" for="phone">Phone Number</label>
+                                    <input class="f-input" type="tel" id="phone" placeholder="+234 812 345 6789">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="f-label" for="bio">Bio / About Me</label>
+                                <textarea class="f-input" id="bio"
+                                    placeholder="Tell learners about yourself and your teaching style…"></textarea>
                             </div>
                         </div>
 
-                        <form onsubmit="saveProfile(event)" id="profileForm">
-                            <div class="form-body">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="f-label" for="firstName">First Name</label>
-                                        <input class="f-input" type="text" id="firstName" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="f-label" for="lastName">Last Name</label>
-                                        <input class="f-input" type="text" id="lastName" required>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="f-label" for="emailDisplay">Email Address</label>
-                                        <input class="f-input" type="email" id="emailDisplay" disabled>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="f-label" for="phone">Phone Number</label>
-                                        <input class="f-input" type="tel" id="phone" placeholder="+234 812 345 6789">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="f-label" for="bio">Bio / About Me</label>
-                                    <textarea class="f-input" id="bio"
-                                        placeholder="Tell learners about yourself and your teaching style…"></textarea>
-                                </div>
-                            </div>
-
-                            <!-- Tutor preferences -->
-                            <div class="section-head section-head--inner">
-                                <div class="section-icon pink-icon">
-                                    <i class="fa-solid fa-sliders"></i>
-                                </div>
-                                <div>
-                                    <h3>Tutor Preferences</h3>
-                                    <p>Set your rate, availability and courses.</p>
-                                </div>
-                            </div>
-                            <div class="form-body">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="f-label" for="hourlyRate">Hourly Rate (ETH)</label>
-                                        <input class="f-input" type="number" id="hourlyRate"
-                                            step="0.001" min="0" placeholder="e.g. 0.005">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="f-label" for="availability">Availability</label>
-                                        <input class="f-input" type="text" id="availability"
-                                            placeholder="e.g. Weekdays 4pm–8pm">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="f-label" for="courses">Courses You Can Teach</label>
-                                    <input class="f-input" type="text" id="courses"
-                                        placeholder="e.g. CSC 401, MTH 101, PHY 201 (comma separated)">
-                                </div>
-                            </div>
-
-                            <div class="form-footer" id="formFooter">
-                                <div class="form-footer-note">
-                                    <i class="fa-solid fa-lock"></i>
-                                    Academic info cannot be changed.
-                                </div>
-                                <button type="submit" class="btn-save" id="saveBtn">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Academic info (read-only) -->
-                    <div class="form-card">
-                        <div class="section-head">
-                            <div class="section-icon green-icon">
-                                <i class="fa-solid fa-graduation-cap"></i>
+                        <!-- Tutor preferences -->
+                        <div class="section-head section-head--inner">
+                            <div class="section-icon pink-icon">
+                                <i class="fa-solid fa-sliders"></i>
                             </div>
                             <div>
-                                <h3>Academic Information</h3>
-                                <p>Read-only! academic info cannot be changed.</p>
+                                <h3>Tutor Preferences</h3>
+                                <p>Set your rate, availability and courses.</p>
                             </div>
                         </div>
                         <div class="form-body">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="f-label">Department</label>
-                                    <div class="info-badge">
-                                        <i class="fa-solid fa-building-columns"></i>
-                                        <span id="deptDisplay">—</span>
-                                    </div>
+                                    <label class="f-label" for="hourlyRate">Hourly Rate (ETH)</label>
+                                    <input class="f-input" type="number" id="hourlyRate"
+                                        step="0.001" min="0" placeholder="e.g. 0.005">
                                 </div>
                                 <div class="form-group">
-                                    <label class="f-label">Level</label>
-                                    <div class="info-badge">
-                                        <i class="fa-solid fa-layer-group"></i>
-                                        <span id="levelDisplay">—</span> Level
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="f-label">Rating</label>
-                                    <div class="rating-badge">
-                                        <i class="fa-solid fa-star"></i>
-                                        <span id="ratingDisplay">No ratings yet</span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="f-label">Total Sessions</label>
-                                    <div class="info-badge">
-                                        <i class="fa-solid fa-users"></i>
-                                        <span id="sessionsDisplay">0</span> sessions completed
-                                    </div>
+                                    <label class="f-label" for="availability">Availability</label>
+                                    <input class="f-input" type="text" id="availability"
+                                        placeholder="e.g. Weekdays 4pm–8pm">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="f-label">Matric Number</label>
-                                <div class="info-badge">
-                                    <i class="fa-solid fa-id-card"></i>
-                                    <span id="matricDisplay">—</span>
+                                <label class="f-label" for="courses">Courses You Can Teach</label>
+                                <input class="f-input" type="text" id="courses"
+                                    placeholder="e.g. CSC 401, MTH 101, PHY 201 (comma separated)">
+                                <div class="courses-wrap" id="coursesDisplay">
+                                    <span class="course-tag-empty">No courses listed</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                </div><!-- /right-col -->
-            </div><!-- /profile-grid -->
+                        <div class="form-footer" id="formFooter">
+                            <div class="form-footer-note">
+                                <i class="fa-solid fa-lock"></i>
+                                Academic info cannot be changed.
+                            </div>
+                            <button type="submit" class="btn-save" id="saveBtn">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Academic info (read-only) -->
+                <div class="form-card">
+                    <div class="section-head">
+                        <div class="section-icon green-icon">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <h3>Academic Information</h3>
+                            <p>Read-only! academic info cannot be changed.</p>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="f-label">Department</label>
+                                <div class="info-badge">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                    <span id="deptDisplay">—</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="f-label">Level</label>
+                                <div class="info-badge">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                    <span id="levelDisplay">—</span> Level
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="f-label">Rating</label>
+                                <div class="rating-badge">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span id="ratingDisplay">No ratings yet</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="f-label">Total Sessions</label>
+                                <div class="info-badge">
+                                    <i class="fa-solid fa-users"></i>
+                                    <span id="sessionsDisplay">0</span> sessions completed
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="f-label">Matric Number</label>
+                            <div class="info-badge">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span id="matricDisplay">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /right-col -->
         </div><!-- /content-scroll -->
     </div><!-- /main-content -->
 

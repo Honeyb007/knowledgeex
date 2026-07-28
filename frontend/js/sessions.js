@@ -12,6 +12,7 @@ if (!user || !token) navigateTo('login.html');
 let allBookings       = [];
 let selectedRating    = 0;
 let selectedBookingId = '';
+let isMandatoryFeedback = false;
 
 const RATING_LABELS = {
     1: 'Poor 😞',
@@ -245,9 +246,15 @@ function renderSessions(bookings) {
    ============================================================ */
 function buildActions(b) {
     const now          = Date.now();
-    const scheduledMs  = new Date(b.scheduledAt).getTime();
-    const hoursPassed  = (now - scheduledMs) / (1000 * 60 * 60);
-    const hoursLeft    = Math.max(0, 48 - hoursPassed).toFixed(1);
+    const createdAtMs  = new Date(b.createdAt).getTime();
+    const acceptanceDeadlineMs = createdAtMs + 48 * 60 * 60 * 1000;
+    const isAcceptanceExpired = now >= acceptanceDeadlineMs;
+    const hoursLeft    = Math.max(0, (acceptanceDeadlineMs - now) / (1000 * 60 * 60)).toFixed(1);
+    const startMs = new Date(b.scheduledAt).getTime();
+    const durationHours = Number(b.duration) || 1;
+    const endMs = startMs + durationHours * 60 * 60 * 1000;
+    const refundDeadlineMs = endMs + 48 * 60 * 60 * 1000;
+    const hoursAfterEnd = Math.max(0, (refundDeadlineMs - now) / (1000 * 60 * 60)).toFixed(1);
 
     switch (b.status) {
 
@@ -258,11 +265,11 @@ function buildActions(b) {
                 </button>`;
 
         case 'pending':
-            if (hoursPassed >= 48) {
+            if (isAcceptanceExpired) {
                 return `
                     <span class="status-msg danger">
                         <i class="fa-solid fa-clock"></i>
-                        Deadline passed — tutor never responded.
+                        Tutor did not respond in time — refund available.
                     </span>
                     <button class="btn-refund" onclick="claimRefund('${b._id}')">
                         <i class="fa-solid fa-rotate-left"></i> Claim Refund
@@ -279,21 +286,40 @@ function buildActions(b) {
                 </span>`;
 
         case 'scheduled':
-            if (hoursPassed >= 48) {
+            if (now < startMs) {
                 return `
-                    <span class="status-msg danger">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        Session time passed — tutor never marked complete.
-                    </span>
-                    <button class="btn-refund" onclick="claimRefund('${b._id}')">
-                        <i class="fa-solid fa-rotate-left"></i> Claim Refund
-                    </button>`;
+                    <span class="status-msg info">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        Session accepted — waiting for session to start.
+                    </span>`;
             }
+
+            if (now >= startMs && now < endMs) {
+                return `
+                    <span class="status-msg info">
+                        <i class="fa-solid fa-circle-play"></i>
+                        Session is live — waiting for session to end and tutor confirmation.
+                    </span>`;
+            }
+
+            // session ended but still within 48h window for tutor to mark complete
+            if (now >= endMs && now < refundDeadlineMs) {
+                return `
+                    <span class="status-msg info">
+                        <i class="fa-solid fa-clock"></i>
+                        Session ended — waiting for tutor to mark complete (${hoursAfterEnd}h left before refund eligibility).
+                    </span>`;
+            }
+
+            // past refund deadline
             return `
-                <span class="status-msg info">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    Session scheduled — attend and await tutor confirmation.
-                </span>`;
+                <span class="status-msg danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Session expired — tutor did not complete; refund available.
+                </span>
+                <button class="btn-refund" onclick="claimRefund('${b._id}')">
+                    <i class="fa-solid fa-rotate-left"></i> Claim Refund
+                </button>`;
 
         case 'declined':
             return `
@@ -392,7 +418,10 @@ async function confirmSession(bookingId) {
 
         if (data.booking) {
             showSuccess('Payment released! Tutor received their funds ✅');
-            loadSessions();
+            openFeedbackModal(data.booking._id,
+                `${data.booking.tutor.firstName} ${data.booking.tutor.lastName}`,
+                true);
+            await loadSessions();
         }
     } catch (err) {
         showError('Error: ' + err.message);
@@ -448,7 +477,7 @@ async function claimRefund(bookingId) {
 /* ============================================================
    FEEDBACK MODAL
    ============================================================ */
-function openFeedbackModal(bookingId, tutorName) {
+function openFeedbackModal(bookingId, tutorName, mandatory = false) {
     const booking = allBookings.find(b => b._id === bookingId);
     if (booking?.feedback) {
         showInfo('Feedback already submitted for this session.');
@@ -457,6 +486,7 @@ function openFeedbackModal(bookingId, tutorName) {
 
     selectedBookingId = bookingId;
     selectedRating    = 0;
+    isMandatoryFeedback = Boolean(mandatory);
 
     /* Reset modal */
     document.getElementById('feedbackTutorName').textContent = tutorName;
@@ -465,21 +495,40 @@ function openFeedbackModal(bookingId, tutorName) {
     document.getElementById('ratingLabel').style.color       = '';
     document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('lit'));
 
-    const btn = document.getElementById('submitFeedbackBtn');
+    const btn        = document.getElementById('submitFeedbackBtn');
+    const btnCancel  = document.querySelector('.btn-cancel');
+    const btnClose   = document.querySelector('.modal-close');
+    const modal      = document.getElementById('feedbackModal');
+
     btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit';
     btn.disabled  = false;
 
-    document.getElementById('feedbackModal').classList.add('open');
+    if (isMandatoryFeedback) {
+        btnCancel.style.display = 'none';
+        btnClose.style.display  = 'none';
+        modal.dataset.mandatory = 'true';
+    } else {
+        btnCancel.style.display = '';
+        btnClose.style.display  = '';
+        modal.dataset.mandatory = 'false';
+    }
+
+    modal.classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
 function closeFeedbackModal() {
+    if (isMandatoryFeedback) {
+        showWarning('Please submit feedback to complete this session.');
+        return;
+    }
     document.getElementById('feedbackModal').classList.remove('open');
     document.body.style.overflow = '';
 }
 
 function handleModalClick(e) {
-    if (e.target === document.getElementById('feedbackModal')) closeFeedbackModal();
+    const modal = document.getElementById('feedbackModal');
+    if (e.target === modal && !isMandatoryFeedback) closeFeedbackModal();
 }
 
 function setRating(r) {
@@ -521,6 +570,7 @@ async function submitFeedback() {
 
         if (data.feedback) {
             showSuccess('Feedback submitted! ⭐ Thank you!');
+            isMandatoryFeedback = false;
             closeFeedbackModal();
             loadSessions();
         } else {

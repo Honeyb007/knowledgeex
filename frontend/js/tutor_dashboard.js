@@ -90,6 +90,23 @@ window.addEventListener('storage', e => {
 })();
 
 /* ============================================================
+   DATE HELPERS
+   ------------------------------------------------------------
+   IMPORTANT: never use Date#toISOString() for calendar-day
+   comparisons — it converts to UTC first, which silently shifts
+   the date backward or forward depending on the user's timezone
+   offset (e.g. Nigeria is UTC+1, so local midnight becomes
+   23:00 the previous day in UTC). Always build the key from the
+   LOCAL year/month/day components instead.
+   ============================================================ */
+function localDateKey(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+/* ============================================================
    LOAD TUTOR PROFILE STATS
    ============================================================ */
 async function loadTutorProfile() {
@@ -241,6 +258,7 @@ async function handleAccept(bookingId) {
                     card.remove();
                     loadRequests();
                     loadTutorProfile();
+                    loadTutorSchedule();
                 }, 300);
             }
         } else {
@@ -322,7 +340,126 @@ async function connectWallet() {
 }
 
 /* ============================================================
+   LOAD TUTOR SCHEDULE — horizontal week strip (matches learner)
+   ============================================================ */
+async function loadTutorSchedule() {
+    const container = document.getElementById('tutorSchedule');
+    if (!container) return;
+
+    try {
+        const res = await fetch('http://localhost:5000/api/bookings/tutor-requests', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const bookings = await res.json();
+
+        const upcoming = bookings
+            .filter(b => b.status === 'scheduled')
+            .map(b => ({
+                ...b,
+                tutor: { firstName: user.firstName, lastName: user.lastName }
+            }));
+
+        /* Group bookings by LOCAL calendar date (not UTC) */
+        const byDate = {};
+        upcoming.forEach(b => {
+            const key = localDateKey(new Date(b.scheduledAt));
+            byDate[key] = byDate[key] || [];
+            byDate[key].push(b);
+        });
+
+        /* Build 7-day week starting on Monday (local time throughout) */
+        const days = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const offset = (today.getDay() + 6) % 7; // 0 => Monday
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - offset);
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            days.push(d);
+        }
+
+        const todayKey = localDateKey(today);
+
+        const calHtml = days.map(d => {
+            const key     = localDateKey(d);
+            const hasSess = !!(byDate[key] && byDate[key].length);
+            return `
+                <button class="cal-day${hasSess ? ' has-session' : ''}" data-date="${key}">
+                    <div class="cal-day-name">${d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                    <div class="cal-day-num">${d.getDate()}</div>
+                    <span class="cal-dot"></span>
+                </button>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="schedule-ui">
+                <div class="week-calendar" id="tutorWeekCalendar">${calHtml}</div>
+                <div class="schedule-list" id="tutorDaySessions"></div>
+            </div>`;
+
+        function renderDaySessions(dateKey) {
+            const list = document.getElementById('tutorDaySessions');
+            const sessions = byDate[dateKey] || [];
+            if (!sessions.length) {
+                list.innerHTML = `<div class="schedule-empty"><i class="fa-regular fa-calendar-xmark"></i>No sessions on this day.</div>`;
+                return;
+            }
+
+            sessions.sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+
+            list.innerHTML = sessions.map(s => {
+                const dt    = new Date(s.scheduledAt);
+                const hours = dt.getHours();
+                const mins  = String(dt.getMinutes()).padStart(2, '0');
+                const ampm  = hours >= 12 ? 'PM' : 'AM';
+                const h12   = hours % 12 || 12;
+                return `
+                    <div class="session-item">
+                        <div class="session-time">${h12}:${mins} ${ampm}</div>
+                        <div>
+                            <div class="session-title">${s.subject}</div>
+                            <div class="session-meta">With ${s.learner.firstName} ${s.learner.lastName}</div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        document.querySelectorAll('#tutorWeekCalendar .cal-day').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#tutorWeekCalendar .cal-day').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderDaySessions(btn.dataset.date);
+            });
+        });
+
+        const todayBtn = document.querySelector(`#tutorWeekCalendar .cal-day[data-date="${todayKey}"]`);
+        if (todayBtn) {
+            todayBtn.classList.add('active');
+            renderDaySessions(todayKey);
+        } else if (days.length) {
+            const firstBtn = document.querySelector('#tutorWeekCalendar .cal-day');
+            if (firstBtn) {
+                firstBtn.classList.add('active');
+                renderDaySessions(firstBtn.dataset.date);
+            }
+        }
+
+    } catch (err) {
+        console.error('Failed to load tutor schedule:', err);
+        container.innerHTML = `
+            <div class="empty-req">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Failed to load schedule.<br>Is the backend running?</p>
+            </div>`;
+    }
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 loadTutorProfile();
 loadRequests();
+loadTutorSchedule();

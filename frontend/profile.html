@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile | KnowledgeEx</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Toastify -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sidebar.css">
 
     <!-- Page CSS -->
     <link rel="stylesheet" href="css/profile.css">
@@ -31,59 +31,63 @@
             KnowledgeEx
         </a>
 
-        <div class="sidebar-nav-group">
-            <div class="sidebar-label">Main Menu</div>
-            <ul class="sidebar-links">
-                <li>
-                    <a href="#" onclick="navigateTo('dashboard.html')">
-                        <i class="fa-solid fa-th"></i> Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onclick="navigateTo('marketplace.html')">
-                        <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onclick="navigateTo('sessions.html')">
-                        <i class="fa-solid fa-calendar-days"></i> My Sessions
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onclick="navigateTo('wallet.html')">
-                        <i class="fa-solid fa-wallet"></i> Wallet & Escrow
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <a class="sidebar-user-chip" id="sidebarUserChip" href="#" onclick="navigateTo('profile.html')">
+            <div class="sidebar-user-av" id="sidebarAv">
+                <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
+                <span id="sidebarInitials">KO</span>
+            </div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="sidebarName">Loading…</div>
+                <div class="sidebar-user-meta learner" id="sidebarRole" style="color:var(--pink); font-weight:700;">Learner</div>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
 
-        <div class="sidebar-nav-group">
-            <div class="sidebar-label">Account</div>
-            <ul class="sidebar-links">
-                <li class="active">
-                    <a href="#" onclick="navigateTo('profile.html')">
-                        <i class="fa-solid fa-circle-user"></i> Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onclick="navigateTo('help.html')">
-                        <i class="fa-solid fa-circle-question"></i> Help Center
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <nav class="sidebar-nav" id="sidebarNavContent">
+            <div class="sidebar-nav-group">
+                <div class="sidebar-nav-label">Main Menu</div>
+                <ul class="sidebar-links">
+                    <li>
+                        <a href="#" onclick="navigateTo('dashboard.html')">
+                            <i class="fa-solid fa-th"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="navigateTo('marketplace.html')">
+                            <i class="fa-solid fa-magnifying-glass"></i> Find Tutors
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="navigateTo('sessions.html')">
+                            <i class="fa-solid fa-calendar-days"></i> My Sessions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="navigateTo('wallet.html')">
+                            <i class="fa-solid fa-wallet"></i> Wallet & Escrow
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-nav-group">
+                <div class="sidebar-nav-label">Account</div>
+                <ul class="sidebar-links">
+                    <li class="active">
+                        <a href="#" onclick="navigateTo('profile.html')">
+                            <i class="fa-solid fa-circle-user"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="navigateTo('help.html')">
+                            <i class="fa-solid fa-circle-question"></i> Help Center
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
         <div class="sidebar-footer">
-            <div class="sidebar-user-chip" id="sidebarUserChip" onclick="navigateTo('profile.html')">
-                <div class="sidebar-user-av" id="sidebarAv">
-                    <img src="" alt="" id="sidebarAvImg" onerror="this.style.display='none'">
-                    <span id="sidebarInitials">KO</span>
-                </div>
-                <div>
-                    <div class="sidebar-user-name" id="sidebarName">Loading…</div>
-                    <div class="sidebar-user-role learner" id="sidebarRole" style="color:var(--pink); font-weight:700;">Learner</div>
-                </div>
-            </div>
             <button class="sidebar-logout" onclick="logout()">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
             </button>
@@ -119,87 +123,62 @@
                 <p>Manage your personal information and account settings.</p>
             </div>
 
-            <div class="profile-grid">
-
-                <!-- ── Left card ── -->
-                <div class="left-card">
-
-                    <!-- Avatar section -->
-                    <div class="avatar-section">
-                        <div class="avatar-glow"></div>
-
-                        <div class="avatar-wrap">
-                            <div class="avatar-fallback" id="avatarFallback">KO</div>
-                            <img class="avatar-img" id="avatarImg" src="" alt=""
-                                 onerror="this.style.display='none'; document.getElementById('avatarFallback').style.display='flex'">
-                            <label class="camera-btn" title="Change photo">
-                                <i class="fa-solid fa-camera"></i>
-                                <input type="file" accept="image/*" onchange="uploadAvatar(event)">
-                            </label>
-                        </div>
-
-                        <div class="profile-name" id="profileName">—</div>
-                        <div class="role-badge">
-                            <i class="fa-solid fa-user-graduate"></i> Learner
+            <!-- ── Profile header strip ── -->
+            <div class="profile-header">
+                <div class="ph-left">
+                    <div class="ph-avatar-wrap">
+                        <div class="avatar-fallback" id="avatarFallback">KO</div>
+                        <img class="avatar-img" id="avatarImg" src="" alt=""
+                             onerror="this.style.display='none'; document.getElementById('avatarFallback').style.display='flex'">
+                        <label class="camera-btn" id="cameraBtn" title="Change photo">
+                            <i class="fa-solid fa-camera"></i>
+                            <input type="file" accept="image/*" onchange="uploadAvatar(event)">
+                        </label>
+                    </div>
+                    <div class="ph-info">
+                        <div class="ph-name-row">
+                            <span class="profile-name" id="profileName">—</span>
+                            <span class="role-badge">
+                                <i class="fa-solid fa-user-graduate"></i> Learner
+                            </span>
                         </div>
                         <div class="profile-sub" id="profileSub">—</div>
                     </div>
+                </div>
 
-                    <!-- Mini stats -->
-                    <div class="mini-stats">
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="sessionsCount">0</div>
-                            <div class="mini-stat-label">Sessions</div>
+                <div class="ph-right">
+                    <div class="ph-stats">
+                        <div class="ph-stat">
+                            <div class="ph-stat-value" id="sessionsCount">0</div>
+                            <div class="ph-stat-label">Sessions</div>
                         </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="profileLevel">—</div>
-                            <div class="mini-stat-label">Level</div>
+                        <div class="ph-divider"></div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value ph-stat-value--level" id="profileLevel">—</div>
+                            <div class="ph-stat-label">Level</div>
                         </div>
                     </div>
+                </div>
+            </div><!-- /profile-header -->
 
-                    <!-- Info rows -->
-                    <div class="info-rows">
-                        <div class="info-row">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <div>
-                                <div class="info-row-label">Department</div>
-                                <div class="info-row-value" id="profileDept">—</div>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <i class="fa-solid fa-id-card"></i>
-                            <div>
-                                <div class="info-row-label">Matric Number</div>
-                                <div class="info-row-value" id="profileMatric">—</div>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <i class="fa-solid fa-envelope"></i>
-                            <div>
-                                <div class="info-row-label">Email</div>
-                                <div class="info-row-value" id="profileEmail">—</div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- ── Form cards ── -->
+            <div class="right-col">
 
-                </div><!-- /left-card -->
-
-                <!-- ── Right form card ── -->
                 <div class="form-card">
                     <form onsubmit="saveProfile(event)">
 
                         <!-- Personal info -->
-                        <div class="form-section">
-                            <div class="section-head">
-                                <div class="section-icon">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <div>
-                                    <h3>Personal Information</h3>
-                                    <p>Update your name, contact details and bio.</p>
-                                </div>
+                        <div class="section-head">
+                            <div class="section-icon violet-icon">
+                                <i class="fa-solid fa-user"></i>
                             </div>
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Update your name, contact details and bio.</p>
+                            </div>
+                        </div>
 
+                        <div class="form-body">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="f-label" for="firstName">First Name</label>
@@ -229,17 +208,17 @@
                         </div>
 
                         <!-- Academic info -->
-                        <div class="form-section form-section--academic">
-                            <div class="section-head">
-                                <div class="section-icon section-icon--pink">
-                                    <i class="fa-solid fa-graduation-cap"></i>
-                                </div>
-                                <div>
-                                    <h3>Academic Information</h3>
-                                    <p>Read-only! academic info cannot be changed.</p>
-                                </div>
+                        <div class="section-head section-head--inner">
+                            <div class="section-icon green-icon">
+                                <i class="fa-solid fa-graduation-cap"></i>
                             </div>
+                            <div>
+                                <h3>Academic Information</h3>
+                                <p>Read-only! academic info cannot be changed.</p>
+                            </div>
+                        </div>
 
+                        <div class="form-body">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="f-label">Department</label>
@@ -278,8 +257,10 @@
                         </div>
 
                     </form>
+                </div>
 
-                    <!-- Danger zone -->
+                <!-- Danger zone -->
+                <div class="form-card">
                     <div class="danger-zone">
                         <div class="danger-zone-text">
                             <h4><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h4>
@@ -289,10 +270,9 @@
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
                         </button>
                     </div>
+                </div>
 
-                </div><!-- /form-card -->
-
-            </div><!-- /profile-grid -->
+            </div><!-- /right-col -->
         </div><!-- /content-scroll -->
     </div><!-- /main-content -->
 

@@ -44,6 +44,10 @@ const bookingSchema = new mongoose.Schema({
     enum: ["pending", "scheduled", "awaiting_confirmation", "completed", "declined", "refunded"],
     default: "pending",
   },
+  awaitingConfirmationSince: {
+    type: Date,
+    default: null,
+  },
   txHash: {
     type: String,
     default: "",
